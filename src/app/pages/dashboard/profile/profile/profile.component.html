@@ -1,0 +1,76 @@
+<div class="skeleton-loader-item">
+  <ngx-skeleton-loader *ngIf='loading$' count="15" [theme]="{ 'border-radius': '0', height: '5vh' }">
+  </ngx-skeleton-loader>
+</div>
+<div class='container' fxLayout="row no-wrap" fxLayout.lt-md="column" fxLayoutGap="60px" fxLayoutAlign='center center'>
+  <mat-card fxFlex="90%" *ngIf='!loading$'>
+    <div class='card-header'>
+      <mat-icon class="mat-18">person_outline</mat-icon>
+    </div>
+    <mat-card-header>
+      <mat-card-title>Edit Profile</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form class='form-container' fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="space-between space-between"
+        [formGroup]='corporateAdminForm' (ngSubmit)="updateProfile()">
+        <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+          <mat-label>First name</mat-label>
+          <input formControlName="firstName" matInput required />
+          <mat-error>First name is required</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+          <mat-label>Last name</mat-label>
+          <input formControlName="lastName" matInput required />
+          <mat-error>Last name is required</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+          <mat-label>Phone number</mat-label>
+          <input formControlName="phoneNumber" matInput required />
+          <mat-error *ngIf="f.phoneNumber.errors?.required">Phone number is required</mat-error>
+          <mat-error *ngIf="f.phoneNumber.errors?.pattern">Phone number is 8 numbers</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+          <mat-label>Email</mat-label>
+          <input formControlName="email" matInput type='email' required />
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+          <mat-label>Members cap</mat-label>
+          <input formControlName="membersCap" matInput type='number' />
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+          <mat-label>Created date</mat-label>
+          <input matInput formControlName="createdAt" [matDatepicker]="picker1">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+          <mat-label>Expire at</mat-label>
+          <input matInput formControlName="membershipExpireAt" [matDatepicker]="picker">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <div fxFlex="45%" fxFlex.lt-sm="100%" class='submit-button-container'>
+          <button mat-raised-button [disabled]='loading$' type='submit' color='primary' class='text-uppercase'>
+            Update
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- <mat-card fxFlex="35%" fxFlex.lt-md="100%">
+    <div class='profile'>
+      <img src="../../../../../assets/img/noavatar.png" alt="profile">
+    </div>
+    <mat-card-content>
+      <h6>companyname</h6>
+      <h4>fullname</h4>
+     
+      <button mat-raised-button color='accent'>
+        CHANGE
+      </button>
+    
+      <input type="file" class="fileUpload" (change)='posterChangeEvent($event)' accept="image/*" />
+    </mat-card-content>
+  </mat-card> -->
+</div>

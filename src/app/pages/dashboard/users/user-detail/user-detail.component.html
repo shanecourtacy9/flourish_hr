@@ -1,0 +1,75 @@
+<mat-toolbar>
+    <button mat-icon-button color="primary" (click)='goBack()'>
+        <mat-icon class="mat-18">arrow_back</mat-icon>
+    </button>
+</mat-toolbar>
+<div class="skeleton-loader-item" *ngIf='loading$'>
+    <ngx-skeleton-loader count="10" [theme]="{ 'border-radius': '0', height: '50px' }">
+    </ngx-skeleton-loader>
+</div>
+<div class='container' fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="60px" fxLayoutAlign='center center'>
+    <!-- <div class='spinner-container' *ngIf='loading$'>
+        <mat-spinner color='accent'></mat-spinner>
+      </div> -->
+    <mat-card fxFlex="95%" *ngIf='!loading$'>
+        <div class='card-header'>
+            {{managementMode}}
+        </div>
+        <mat-card-content>
+            <form class='form-container' autocomplete="off" fxLayout="row wrap" fxLayoutGap="30px" fxLayoutAlign="start  center"
+                [formGroup]='userForm' (ngSubmit)='updateUser()'>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Email</mat-label>
+                    <input formControlName="email" matInput type='email' required />
+                    <mat-error>Email is required</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>First name</mat-label>
+                    <input formControlName="firstName" matInput required />
+                    <mat-error>First name is required</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Last name</mat-label>
+                    <input formControlName="lastName" matInput required />
+                    <mat-error>Last name is required</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Phone number</mat-label>
+                    <input formControlName="phoneNumber" matInput/>
+                    <mat-error *ngIf="f.phoneNumber.errors?.maxlength">Phone number is less than 20 characters</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Gender</mat-label>
+                    <mat-select formControlName='gender' required>
+                        <mat-option *ngFor="let gender of genders" [value]="gender.value">
+                            {{gender.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Member</mat-label>
+                    <mat-select formControlName='isMember' required>
+                        <mat-option *ngFor="let membershipType of membershipTypes" [value]="membershipType">
+                            {{membershipType}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>DOB</mat-label>
+                    <input matInput formControlName="dateOfBirth" [min]="minDate" [max]="maxDate"
+                        [matDatepicker]="picker" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <div fxFlex="45%" fxFlex.lt-sm="100%" class='button-container'>
+                    <button *ngIf="!isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase'>
+                       Update
+                    </button>
+                    <button *ngIf="isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase'>
+                        Add
+                     </button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

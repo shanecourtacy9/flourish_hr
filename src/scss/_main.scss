@@ -1,0 +1,92 @@
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+html, body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background-color: #fafafa;
+}
+
+h1, h2, h3, h4, h5, h6, p, a, button, div, label, small {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 300;
+  /*line-height: 1.5em;*/
+  margin: 0;
+}
+
+h1, .h1 {
+  font-size: 3.8em;
+}
+
+h2, .h2 {
+  font-size: 2.6em;
+}
+
+h3, .h3 {
+  font-size: 1.825em;
+}
+
+h4, .h4 {
+  font-size: 1.3em;
+}
+
+h5, .h5 {
+  font-size: 1.25em;
+  line-height: 1.5em;
+}
+
+h6, .h6 {
+  font-size: 1em;
+}
+
+p {
+  margin: 0;
+  color: #999;
+}
+
+a {
+  color: #9c27b0;
+  text-decoration: none;
+}
+
+a:hover{
+  color: #89229b;
+  text-decoration: none;
+}
+
+b{
+  font-weight: 300;
+}
+
+.spinner-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+}
+
+.card-header {
+  position: absolute;
+  text-align: center;
+  background: linear-gradient(60deg,#606380,#3f51b5);
+  box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
+  /*margin: -20px 15px 0;*/
+  border-radius: 3px;
+  padding: 20px;
+  top: -35px;
+  text-transform: uppercase;
+  left:20px;
+  color:#eee
+}
+
+.text-uppercase{
+  text-transform: uppercase;
+}
+
+.mat-snack-bar-container {
+  max-width: 70vw !important;
+}

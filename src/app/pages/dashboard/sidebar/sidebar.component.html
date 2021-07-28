@@ -1,0 +1,13 @@
+<div class="logo" [style.color]="normalFontColor">
+  <img src="../../assets/img/flourish-logo.png" class="logo-img" alt="logo" />
+</div>
+<mat-nav-list>
+  <mat-divider [style.background-color]="dividerBgColor"></mat-divider>
+  <mat-list-item *ngFor="let menuItem of menuItems" routerLinkActive #rla="routerLinkActive"
+    [ngClass]="rla.isActive? 'active' : ''" (click)='changeTitle(menuItem)'>
+    <a [routerLink]="[menuItem.path]">
+      <mat-icon>{{menuItem.icon}}</mat-icon>
+      <span>{{menuItem.title}}</span>
+    </a>
+  </mat-list-item>
+</mat-nav-list>

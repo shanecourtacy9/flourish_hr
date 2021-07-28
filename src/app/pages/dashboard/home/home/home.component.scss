@@ -1,0 +1,45 @@
+.user-page-container {
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  .home-title {
+    margin-left: 20px;
+    margin-bottom: 60px;
+  }
+}
+
+.indicator-container {
+  width: 96%;
+  margin: 0 auto;
+
+}
+
+.indicator-container>mat-card {
+  min-height: 300px;
+  width: 100%;
+}
+
+.sub-card{
+  margin:40px auto;
+  background-color: aliceblue;
+  overflow: hidden;
+}
+
+mat-chip {
+  max-width: 20px;
+  max-height:10px;
+}
+.legend{
+  margin-top:30px !important;
+}
+
+.legend::before {
+  content: "";
+    border-bottom-color: red;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-left-color: red;
+    border-left-style: solid;
+    border-left-width: 20px;
+}

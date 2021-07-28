@@ -1,0 +1,81 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+  - url: /(.+\.js)
+    static_files: dist/hrdashboard/\1
+    upload: dist/hrdashboard/(.+\.js)
+    
+    redirect_http_response_code: 301
+
+  - url: /(.+\.css)
+    static_files: dist/hrdashboard/\1
+    upload: dist/hrdashboard/(.+\.css)
+    
+    redirect_http_response_code: 301
+
+  - url: /(.+\.png)
+    static_files: dist/hrdashboard/\1
+    upload: dist/hrdashboard/(.+\.png)
+    
+    redirect_http_response_code: 301
+
+  - url: /(.+\.jpg)
+    static_files: dist/hrdashboard/\1
+    upload: dist/hrdashboard/(.+\.jpg)
+    
+    redirect_http_response_code: 301
+
+  - url: /(.+\.gif)
+    static_files: dist/hrdashboard/\1
+    upload: dist/hrdashboard/(.+\.gif)
+    
+    redirect_http_response_code: 301
+
+  - url: /(.+\.svg)
+    static_files: dist/hrdashboard/\1
+    upload: dist/hrdashboard/(.+\.svg)
+    
+    redirect_http_response_code: 301
+
+  - url: /favicon.ico
+    static_files: dist/hrdashboard/favicon.ico
+    upload: dist/hrdashboard/favicon.ico
+    
+    redirect_http_response_code: 301
+
+  - url: /(.+\.json)
+    static_files: dist/hrdashboard/\1
+    upload: dist/hrdashboard/(.+\.json)
+    
+    redirect_http_response_code: 301
+
+  - url: /(.+)
+    static_files: dist/hrdashboard/index.html
+    upload: dist/hrdashboard/index.html
+    
+    redirect_http_response_code: 301
+
+  - url: /
+    static_files: dist/hrdashboard/index.html
+    upload: dist/hrdashboard/index.html
+    
+    redirect_http_response_code: 301
+# handlers:
+# - url: /
+#   static_files: dist/hrdashboard/index.html
+#   upload: dist/hrdashboard/index.html
+
+# - url: /
+#   static_dir: dist/hrdashboard
+
+skip_files:
+  - e2e/
+  - node_modules/
+  - src/
+  - ^(.*/)?\..*$
+  - ^(.*/)?.*\.json$
+  - ^(.*/)?.*\.md$
+  - ^(.*/)?.*\.yaml$
+  - ^LICENSE

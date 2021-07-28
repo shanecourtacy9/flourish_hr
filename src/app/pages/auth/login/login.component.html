@@ -1,0 +1,28 @@
+<div class="login-container">
+    <div class="background"></div>
+    <mat-card>
+        <div class='card-header'>
+            Login
+        </div>
+        <mat-card-content>
+            <form [formGroup]='loginForm' (ngSubmit)="onLogin()">
+                <div fxLayout="row wrap">
+                    <mat-form-field fxFlexFill>
+                        <input matInput formControlName="email" type="email" placeholder="Email">
+                    </mat-form-field>
+                    <mat-form-field fxFlexFill>
+                        <input matInput formControlName="password" type="password" placeholder="password">
+                    </mat-form-field>
+                    <div fxFlexFill>
+                        <button type="submit" mat-raised-button color="primary" class='button-uppercase'>Let's go</button>
+                    </div>
+                </div>
+            </form>
+            <div fxLayout="row wrap">
+                <div fxFlexFill>
+                    <button mat-Stroked-button (click)='resetPassword()'>Forgot password ?</button>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

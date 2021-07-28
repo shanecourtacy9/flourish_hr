@@ -1,0 +1,58 @@
+<div class='user-page-container'>
+    <h3 class='home-title'>Welcome to Flourish</h3>
+    <div class="skeleton-loader-item">
+        <ngx-skeleton-loader *ngIf='!initializedLoading' count="8" [theme]="{ 'border-radius': '0', height: '10vh' }">
+        </ngx-skeleton-loader>
+    </div>
+    <div class='indicator-container' fxLayout="row nowrap" fxLayout.lt-md="column" fxLayoutGap="60px"
+        fxLayoutAlign='center center' *ngIf='initializedLoading'>
+        <mat-card fxFlex="70%" fxFlex.lt-md="100%">
+            <div class='card-header'>
+                Upcoming programmes
+            </div>
+            <mat-card-content>
+                <ng-container *ngIf='upcomingProgrammes.length>0'>
+                    <p class='legend'>
+                        *Low than 50%
+                    </p>
+                    <mat-card *ngFor='let upcomingProgramme of upcomingProgrammes' class='sub-card'
+                        [ngStyle]="{'background-color':upcomingProgramme?.isLower? '#e24c1e' : '' }">
+                        <mat-card-content fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign='space-around center'>
+                            <div>
+                                <h3>{{upcomingProgramme?.date}}</h3>
+                            </div>
+                            <div fxFlex="1 1 auto">
+                                <h4>{{upcomingProgramme?.name}}</h4>
+                            </div>
+                            <div>
+                                <h5>{{upcomingProgramme?.registeredUsers.length}}/{{upcomingProgramme?.capacity}}
+                                </h5>
+                            </div>
+
+                        </mat-card-content>
+                    </mat-card>
+                </ng-container>
+
+                <ng-container *ngIf='upcomingProgrammes.length<=0'>
+                    <mat-card class='sub-card'>
+                        <mat-card-content fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign='space-around center'>
+
+                            <div>
+                                <h3>No upcoming programmes</h3>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+
+                </ng-container>
+            </mat-card-content>
+        </mat-card>
+        <!-- <mat-card fxFlex="50%" fxFlex.lt-md="100%">
+            <div class='card-header'>
+                Programme rating
+            </div>
+            <mat-card-content>
+               
+            </mat-card-content>
+        </mat-card> -->
+    </div>
+</div>

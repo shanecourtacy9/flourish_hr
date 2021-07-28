@@ -1,0 +1,69 @@
+.login-container {
+  height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.background {
+  background: url("../../../../assets/img/lock_bg.jpg") no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  filter: brightness(40%);
+}
+
+
+mat-card {
+  position: absolute;
+  padding: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  -webkit-animation-name: card;
+  -moz-animation-name: card;
+  -o-animation-name: card;
+  animation-name: card;
+  -webkit-animation-duration: 600ms;
+  -moz-animation-duration: 600ms;
+  -o-animation-duration: 600ms;
+  animation-duration: 600ms;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes card {
+  from {
+    top: -40px;
+  }
+
+  to {
+    top: 30%;
+  }
+}
+
+@keyframes card {
+  from {
+    top: -40px;
+  }
+
+  to {
+    top: 30%;
+  }
+}
+
+mat-form-field {
+  margin-bottom: 20px
+}
+
+button{
+  font-size: medium;
+  margin-bottom:20px;
+}
+
+.button-uppercase{
+  text-transform: uppercase;
+}

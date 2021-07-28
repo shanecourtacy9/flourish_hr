@@ -1,0 +1,88 @@
+<div>
+    <ng-container *ngIf="loading$">
+        <div class="spinner-container">
+            <mat-spinner diameter='20' strokeWidth='50'></mat-spinner>
+        </div>
+    </ng-container>
+    <mat-toolbar fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign='start center'>
+        <button [disabled]='loading$' mat-icon-button color="primary" class='text-uppercase' (click)='goBack()'>
+            <mat-icon class="mat-18">arrow_back</mat-icon>
+        </button>
+        <form [formGroup]="fileUploadForm" novalidate>
+            <mat-form-field appearance="outline" color='primary'>
+                <ngx-mat-file-input [disabled]='loading$' formControlName="coacheeFile" multiple='false' (change)='onFileChange($event)'
+                    [accept]="'.xlsx,.xls'"></ngx-mat-file-input>
+                <mat-icon matSuffix>attach_file</mat-icon>
+            </mat-form-field>
+        </form>
+        <a fxFlexAlign='end' href='https://storage.googleapis.com/flourish/uploadfiles/User_batch_upload_template.xlsx'>
+            <small>
+               Download template
+            </small>
+        </a>
+        <span class='span-space'></span>
+        <button [disabled]='loading$' mat-flat-button color="primary" class='text-uppercase' fxFlexOffset='20px' fxFlexOffset.lt-sm='10px'
+            (click)='uploadUsers()'>
+            upload
+        </button>
+        <!-- <button [disabled]='loading$' mat-flat-button color="primary" class='text-uppercase' fxFlexOffset='20px' fxFlexOffset.lt-sm='10px'
+            (click)='cancelUpload()'>
+            cancel
+        </button> -->
+    </mat-toolbar>
+
+    <div class='table-card-container'>
+        <mat-card [ngStyle]="{'opacity':coachees.length? 1 : 0 }">
+            <mat-card-content>
+                <table mat-table [dataSource]='coacheeDataSource' *ngIf='coachees.length>0'>
+                    <!-- Index column -->
+                    <ng-container matColumnDef="index">
+                        <th mat-header-cell *matHeaderCellDef> Index </th>
+                        <td mat-cell *matCellDef="let coachee; let i = index;">
+                            {{i+(paginator.pageIndex * paginator.pageSize) + 1}}
+                        </td>
+                    </ng-container>
+                    <!-- Email Column -->
+                    <ng-container matColumnDef="email" sticky>
+                        <th mat-header-cell *matHeaderCellDef> Email </th>
+                        <td mat-cell *matCellDef="let coachee"> {{coachee?.email}} </td>
+                    </ng-container>
+
+                    <!--first Name Column -->
+                    <ng-container matColumnDef="first name">
+                        <th mat-header-cell *matHeaderCellDef>First Name </th>
+                        <td mat-cell *matCellDef="let coachee"> {{coachee.firstName}}</td>
+                    </ng-container>
+                    <!-- last name Column -->
+                    <ng-container matColumnDef="last name">
+                        <th mat-header-cell *matHeaderCellDef> Last Name </th>
+                        <td mat-cell *matCellDef="let coachee"> {{coachee.lastName}} </td>
+                    </ng-container>
+                    <!-- Gender Column -->
+                    <ng-container matColumnDef="gender">
+                        <th mat-header-cell *matHeaderCellDef> Gender </th>
+                        <td mat-cell *matCellDef="let coachee"> {{coachee.gender}} </td>
+                    </ng-container>
+                    <!-- Date of birth Column -->
+                    <ng-container matColumnDef="dateOfBirth">
+                        <th mat-header-cell *matHeaderCellDef> DOB </th>
+                        <td mat-cell *matCellDef="let coachee"> {{coachee.dateOfBirth }} </td>
+                    </ng-container>
+                    <!-- Phone number Column -->
+                    <ng-container matColumnDef="phoneNumber">
+                        <th mat-header-cell *matHeaderCellDef> Phone Number </th>
+                        <td mat-cell *matCellDef="let coachee"> {{coachee.phoneNumber}} </td>
+                    </ng-container>
+                    <!-- Member Column -->
+                    <ng-container matColumnDef="member">
+                        <th mat-header-cell *matHeaderCellDef> Member </th>
+                        <td mat-cell *matCellDef="let coachee"> {{coachee.isMember}}</td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="coacheeTableColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: coacheeTableColumns;"></tr>
+                </table>
+                <mat-paginator [length]='totalCoachees' [pageSizeOptions]="[20, 30]"></mat-paginator>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

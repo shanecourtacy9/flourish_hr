@@ -1,0 +1,42 @@
+<mat-toolbar>
+    <div>
+        <button mat-icon-button (click)="toggleSidenav()">
+            <mat-icon class='white-icon'>menu</mat-icon>
+        </button>
+    </div>
+    <div class="left-part">
+        <!-- <button fxHide.lt-md>
+            <mat-icon>
+                more_vert
+            </mat-icon>
+        </button> -->
+        &nbsp;&nbsp; {{title}}
+    </div>
+    <span class="example-spacer"></span>
+    <div class='right-part'>
+        <button mat-mini-fab mat-icon-button color="primary"
+        [matMenuTriggerFor]="menu">
+        <!-- #menuTrigger="matMenuTrigger"  (mouseover)="menuTrigger.openMenu()" -->
+        <!-- (mouseleave)="menuTrigger.closeMenu()" -->
+        <mat-icon mat-list-icon>person</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <mat-list>
+                <mat-list-item (click)='gotoProfilePage()'>
+                    <mat-icon mat-list-icon>person</mat-icon>
+                    <div mat-line>Profile</div>
+                </mat-list-item>
+                <mat-list-item (click)='openPasswordDialog()'>
+                    <mat-icon mat-list-icon>lock</mat-icon>
+                    <div mat-line>Reset Password</div>
+                </mat-list-item>
+                <mat-list-item (click)='logout()'>
+                    <mat-icon mat-list-icon>exit_to_app</mat-icon>
+                    <div mat-line>Logout</div>
+                </mat-list-item>
+               
+            </mat-list>
+        </mat-menu>
+    </div>
+
+</mat-toolbar>

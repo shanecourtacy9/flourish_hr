@@ -1,0 +1,44 @@
+@import '~src/scss/variables';
+.example-spacer {
+    flex: 1 1 auto;
+  }
+
+  mat-toolbar{
+    height:60px;
+  }
+  :host ::ng-deep mat-toolbar{
+    background:rgba(53, 78, 112, 0.96)!important;
+  }
+
+  mat-list{
+    width:200px;
+  }
+  ::ng-deep .mat-menu-content{
+    background-color: rgba(53, 78, 112, 0.96);
+  }
+  
+  .logo-img{
+    width: 45px;
+    border-radius: 50%;
+  }
+
+  .navbar-avatar {
+    margin: 0 1rem !important;
+    height:60px;
+  }
+
+  .left-part{
+    text-transform: uppercase;
+    color:#eee
+  }
+
+  .white-icon{
+    color:$white
+  }
+
+  mat-list-item{
+    display: flex;
+    align-items: center;
+    color:$white !important;
+    border-radius: 5px;
+  }

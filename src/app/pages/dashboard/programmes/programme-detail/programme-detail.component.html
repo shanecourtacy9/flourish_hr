@@ -1,0 +1,125 @@
+<mat-toolbar fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign='start center'>
+    <button  mat-icon-button color="primary" (click)='goBack()'>
+        <mat-icon class="mat-18">arrow_back</mat-icon>
+    </button>
+    <span class='span-space'></span>
+    <button [disabled]='loading$' mat-flat-button color="primary"  fxFlexOffset='20px' *ngIf='!isAddMode'
+        fxFlexOffset.lt-sm='10px' (click)='exportRegisteredUsers()'>
+        Download registration list
+    </button>
+    <button [disabled]='loading$' mat-flat-button color="primary"  fxFlexOffset='20px' *ngIf='!isAddMode'
+        fxFlexOffset.lt-sm='10px' (click)='exportFeedback()'>
+        Download feedback report
+    </button>
+</mat-toolbar>
+
+<div class="skeleton-loader-item" *ngIf='loading$'>
+    <ngx-skeleton-loader count="10" [theme]="{ 'border-radius': '0', height: '50px' }">
+    </ngx-skeleton-loader>
+</div>
+<div class='container' fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="60px" fxLayoutAlign='center center'>
+    <!-- <div class='spinner-container' *ngIf='loading$'>
+        <mat-spinner color='accent'></mat-spinner>
+      </div> -->
+    <mat-card fxFlex="95%" *ngIf='!loading$'>
+        <div class='card-header'>
+            {{managementMode}}
+        </div>
+        <mat-card-content>
+            <form class='form-container' autocomplete="off" fxLayout="row wrap" fxLayoutGap="30px"
+                fxLayoutAlign="start  center" [formGroup]='programmeForm' (ngSubmit)='updateProgramme()'>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Programme Name</mat-label>
+                    <input formControlName="name" matInput required />
+                    <mat-error *ngIf="f.name.errors?.required">Name is required</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Date</mat-label>
+                    <input matInput formControlName="date" [min]="minDate" [matDatepicker]="picker" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Start Time</mat-label>
+                    <input matInput formControlName="startTime" [ngxTimepicker]="startPicker" required>
+                    <ngx-material-timepicker #startPicker></ngx-material-timepicker>
+                    <mat-error *ngIf="f.startTime.errors?.required">start time is required</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>End Time</mat-label>
+                    <input matInput formControlName="endTime" [ngxTimepicker]="endPicker" required>
+                    <ngx-material-timepicker #endPicker></ngx-material-timepicker>
+                    <mat-error *ngIf="f.endTime.errors?.required">end time is required</mat-error>
+                    <mat-error *ngIf="f.endTime.errors?.BiggerMatch">end time must bigger than start time</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Programme Category</mat-label>
+                    <mat-select formControlName='category' required>
+                        <mat-option *ngFor="let category of programmeCategories" [value]="category._id">
+                            {{category.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="f.category.errors?.required">category is required</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Capacity</mat-label>
+                    <input formControlName="capacity" matInput type='number' required />
+                    <mat-error *ngIf="f.capacity.errors?.required">participant slots is required</mat-error>
+                    <mat-error *ngIf="f.capacity.errors?.min">At least 1 person</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Write Up</mat-label>
+                    <textarea formControlName="description" matInput></textarea>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Trainer Name</mat-label>
+                    <input formControlName="trainer" matInput>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Person in Charge</mat-label>
+                    <input formControlName="personInCharge" matInput>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Contact Number</mat-label>
+                    <input formControlName="contactNumber" matInput />
+                    <mat-error *ngIf="f.contactNumber.errors?.pattern">contact number is 8 numbers</mat-error>
+                </mat-form-field>
+                <mat-form-field fxFlex="45%" appearance="outline" fxFlex.lt-md="100%">
+                    <mat-label>Programme type(Online/ Offline)</mat-label>
+                    <mat-select formControlName='isOnline' required>
+                        <mat-option *ngFor="let onlineCondition of onlineConditions" [value]="onlineCondition.value">
+                            {{onlineCondition.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Zoom Link/Venue and room details</mat-label>
+                    <textarea formControlName="venueOrLink" matInput placeholder="Venue Or Online Link"
+                        required></textarea>
+                    <mat-error *ngIf="f.venueOrLink.errors?.required">Venue Or Online Link is required</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Password (For online programme, this is optional)</mat-label>
+                    <input formControlName="password" matInput />
+                </mat-form-field>
+                <mat-form-field fxFlex="45%" fxFlex.lt-md="100%" appearance="outline">
+                    <mat-label>Access</mat-label>
+                    <mat-select formControlName='isFree' required>
+                        <mat-option *ngFor="let freeCondition of freeConditions" [value]="freeCondition.value">
+                            {{freeCondition.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div fxFlex="45%" fxFlex.lt-md="100%" class='button-container' fxFlexAlign="end">
+                    <button *ngIf="!isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase'>
+                        Update
+                    </button>
+                    <button *ngIf="isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase'>
+                        Add
+                    </button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

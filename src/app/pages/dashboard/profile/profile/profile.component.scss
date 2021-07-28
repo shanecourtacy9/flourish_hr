@@ -1,0 +1,74 @@
+.container {
+  margin-top: 50px
+}
+
+mat-card {
+  min-height: 170px;
+  width: 100%;
+  margin-bottom: 60px;
+
+  mat-card-header {
+    display: block;
+    text-align: center;
+
+    mat-card-title {
+      font-weight: inherit
+    }
+  }
+
+  form {
+    margin-top: 40px;
+  }
+
+  mat-card-content {
+    h6 {
+      margin-top: 100px;
+      margin-bottom: 8px;
+      color: #999;
+      text-align: center;
+    }
+
+    h4 {
+      margin-bottom: 5px;
+      text-align: center;
+    }
+  }
+}
+
+.profile {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.profile img {
+  border-radius: 50%;
+  width: 130px;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+.fileUpload {
+  position: absolute;
+  z-index: 9;
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  left: 0px;
+  top: 0px;
+  cursor: pointer;
+}
+
+
+.submit-button-container {
+  text-align: end;
+  align-self: center;
+}
+
+
+.skeleton-loader-item {
+  width: auto;
+  height: auto;
+  margin: 10px auto;
+  padding: 10px;
+}

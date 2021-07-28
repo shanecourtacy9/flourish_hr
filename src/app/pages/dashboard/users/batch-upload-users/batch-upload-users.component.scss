@@ -1,0 +1,59 @@
+.span-space{
+    flex: 1 1 auto
+}
+mat-toolbar{
+    a{
+        text-decoration-line:underline !important;
+    }
+}
+
+:host {
+  mat-toolbar{
+    ::ng-deep .mat-form-field-flex>.mat-form-field-infix {
+      padding: 0.3em 0px !important;
+    }
+  
+    ::ng-deep .mat-form-field-wrapper {
+      padding-bottom: 0.1em
+    }
+  
+    ::ng-deep .mat-form-field-label-wrapper {
+      top: -1.5em;
+    }
+  
+    ::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+      transform: translateY(-1.1em) scale(.75);
+      width: 133.33333%;
+    }
+  }
+    
+  }
+
+  table {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  
+    .mat-row:nth-child(odd) {
+      background-color: #e5eaee;
+    }
+  
+    .mat-header-cell {
+      text-align: center;
+      text-transform: uppercase;
+      color: #4b528b;
+    }
+    .mat-cell{
+      max-width: 200px;
+      overflow-wrap: break-word;
+    }
+  
+  }
+  
+  .table-card-container {
+    margin-top:20px;
+    margin-bottom:20px;
+    width: 95%;
+    margin: 0 auto;
+  }
+  

@@ -1,0 +1,72 @@
+@import '~src/scss/variables';
+.logo{
+  padding: 40px 0 10px 0;
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+  position: relative;
+  text-transform: uppercase;
+}
+
+.logo-img{
+  width: 80%;
+  height:80%;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border-radius: 5px;
+}
+
+mat-divider{
+  margin-bottom:15px;
+}
+
+mat-nav-list{
+  width: 230px;
+  position: relative;
+  padding-top:15px
+}
+
+mat-list-item{
+  margin-bottom: 30px;
+}
+
+mat-list-item a{
+  display: flex;
+  align-items: center;
+  color:$white;
+  width:230px;
+  border-radius: 5px;
+  -webkit-transition: all 400ms;
+  -moz-transition: all 400ms;
+  -ms-transition: all 400ms;
+  -o-transition: all 400ms;
+  transition: all 400ms;
+  height: 50px;
+  text-decoration: none;
+  mat-icon{
+    padding-left:15px
+  }
+}
+
+mat-list-item a:hover, .parent-active{
+  background-color:#ff9e43
+}
+
+mat-list-item a span{
+  margin-left: 20px;
+}
+
+.active a, .active a:hover{
+  color: rgba(0,0,0,.6) ;
+  background-color:#b0d6f0;
+  box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(60, 72, 88, 0.4);
+  -webkit-transition: all 400ms;
+  -moz-transition: all 400ms;
+  -ms-transition: all 400ms;
+  -o-transition: all 400ms;
+  transition: all 400ms;
+}
+
+
+

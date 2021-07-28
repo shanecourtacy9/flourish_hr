@@ -1,0 +1,153 @@
+<div class='user-page-container'>
+    <div class="skeleton-loader-item">
+        <ngx-skeleton-loader *ngIf='!initializedLoading' count="8" [theme]="{ 'border-radius': '0', height: '10vh' }">
+        </ngx-skeleton-loader>
+    </div>
+    <ng-container *ngIf="isMember">
+        <div class='table-card-container' [ngStyle]="{'opacity':initializedLoading? 1 : 0 }">
+            <mat-card>
+                <div class='table-toolbar' fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign='start center'>
+                    <mat-form-field autocomplete="off" appearance="outline" fxFlex="1 1 auto" fxFlexOffset='20px'
+                        fxFlex.lt-md="100%">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input [formGroup]="rangeFormGroup" [rangePicker]="picker">
+                            <input matStartDate placeholder="Start date" formControlName="startDate">
+                            <input matEndDate placeholder="End date" formControlName="endDate">
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                    <span class='span-space'></span>
+                    <div fxFlexOffset.lt-md='20px' fxFlex.lt-md="100%" class='button-container' fxFlexAlign='center'>
+                        <button mat-flat-button color="primary" class='text-uppercase' (click)='addNewProgramme()'>
+                            add new
+                        </button>
+                        <button mat-flat-button color="primary" class='text-uppercase' fxFlexOffset='20px'
+                            fxFlexOffset.lt-sm='10px' (click)='gotoBatchUploadProgrammesPage()'>
+                            batch upload
+                        </button>
+                    </div>
+                </div>
+                <mat-divider></mat-divider>
+                <mat-card-content>
+                    <ngx-skeleton-loader *ngIf='loading$' count="4" [theme]="{ 'border-radius': '0', height: '10vh' }">
+                    </ngx-skeleton-loader>
+                    <table mat-table [dataSource]="programmes" matSort matSortDisableClear matSortDirection="desc"
+                        *ngIf='!loading$'>
+                        <!-- Index coloum -->
+                        <ng-container matColumnDef="index">
+                            <th mat-header-cell *matHeaderCellDef> Index </th>
+                            <td mat-cell *matCellDef="let i = index;">
+                                {{i + (paginator?.pageIndex * paginator?.pageSize)+1}}
+                            </td>
+                        </ng-container>
+                        <!--name -->
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef>
+                                Name
+                            </th>
+                            <td mat-cell *matCellDef="let row" (click)="editProgramme(row)">
+                                {{row?.name}}
+                            </td>
+                        </ng-container>
+                        <!--date -->
+                        <ng-container matColumnDef="date">
+                            <th mat-header-cell *matHeaderCellDef>
+                                Date
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                {{row?.date |date}}
+                            </td>
+                        </ng-container>
+                        <!--startTime -->
+                        <ng-container matColumnDef="startTime">
+                            <th mat-header-cell *matHeaderCellDef>
+                                Start Time
+                            </th>
+                            <td mat-cell *matCellDef="let row">
+                                {{row?.startTime}}
+                            </td>
+                        </ng-container>
+                        <!-- endTime -->
+                        <ng-container matColumnDef='endTime'>
+                            <th mat-header-cell *matHeaderCellDef>End Time</th>
+                            <td mat-cell *matCellDef='let row'>
+                                {{row.endTime}}
+                            </td>
+                        </ng-container>
+                        <!-- Registered -->
+                        <ng-container matColumnDef="registeredNum">
+                            <th mat-header-cell *matHeaderCellDef>
+                                Registered
+                            </th>
+                            <td mat-cell *matCellDef="let row" [ngClass]="{'highlight':row?.isLower}">
+                                {{row?.registeredUsers.length}}/{{row?.capacity}}
+                            </td>
+                        </ng-container>
+                        <!-- Reminders -->
+                        <ng-container matColumnDef='reminders'>
+                            <th mat-header-cell *matHeaderCellDef>Reminders</th>
+                            <td mat-cell *matCellDef='let row'>
+                                <button mat-stroked-button color='primary' [disabled]="row.isOutdated ||row.isClicked"
+                                    class='text-uppercase' (click)='recruitUsrs(row)'>
+                                    Recruit
+                                </button>&nbsp;|
+                                <button mat-stroked-button color='primary' class='text-uppercase'
+                                    [disabled]="row.isOutdated||row.isClicked" (click)='reminderUsers(row)'>
+                                    reminder
+                                </button>
+                            </td>
+                        </ng-container>
+                        <!-- Actions -->
+                        <ng-container matColumnDef='actions'>
+                            <th mat-header-cell *matHeaderCellDef>Actions</th>
+                            <td mat-cell *matCellDef='let row;let i = index;'>
+                                <button mat-icon-button mat-stroked-button color='primary' (click)="editProgramme(row)">
+                                    <mat-icon class='white-icon'>create</mat-icon>
+                                </button>&nbsp;|
+                                <button mat-icon-button mat-stroked-button color='primary'
+                                [disabled]="row.isClicked"(click)='deleteProgramme(row)'>
+                                    <mat-icon class='white-icon'>delete</mat-icon>
+                                </button>
+                                <!-- <button mat-icon-button mat-stroked-button color='primary'
+                                [disabled]="row.isClicked"(click)='export(row)'>
+                                    <mat-icon class='white-icon'>export</mat-icon>
+                                </button> -->
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns:displayedColumns;">
+                        </tr>
+                    </table>
+                    <mat-paginator [length]='totalProgrammes' [pageSizeOptions]="[20, 30]"></mat-paginator>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf='!isMember'>
+        <div class='non-member'>
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>INDIVIDUAL</mat-card-title>
+                </mat-card-header>
+                <mat-card-content fxLayout="row wrap" fxLayoutAlign='center center'>
+                    <div class="icon">
+                        <i class="material-icons">weekend</i>
+                    </div>
+                    <div fxFlex='100%'>
+                        <h3>Free Version</h3>
+                    </div>
+                    <div fxFlex='100%'>
+                        <p>
+                            Upgrade to member and add new programmes
+                        </p>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+    </ng-container>
+
+
+</div>

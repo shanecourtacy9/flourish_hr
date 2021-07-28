@@ -1,0 +1,51 @@
+.span-space{
+  flex: 1 1 auto
+}
+.container {
+    margin-top: 50px
+  }
+  
+  mat-card {
+    min-height: 170px;
+    width: 100%;
+    margin-bottom: 20px;
+    mat-card-header {
+      display: block;
+      text-align: center;
+  
+      mat-card-title {
+        font-weight: inherit
+      }
+    }
+  
+    form {
+      margin-top: 20px;
+    }
+  }
+  
+  .profile {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .submit-button-container {
+    text-align: end;
+    align-self: center;
+  }
+  
+  
+  .skeleton-loader-item {
+    width: auto;
+    height: auto;
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  .button-container {
+    text-align: end;
+    align-self: center;
+    button{
+      margin-right:20px
+    }
+  }
