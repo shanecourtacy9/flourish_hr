@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  url: 'http://34.87.94.22'
+  url: 'https://production-dot-uphealthgcp.et.r.appspot.com',
 };
 
