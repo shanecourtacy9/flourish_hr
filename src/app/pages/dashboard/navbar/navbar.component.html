@@ -1,42 +1,131 @@
-<mat-toolbar>
-    <div>
-        <button mat-icon-button (click)="toggleSidenav()">
-            <mat-icon class='white-icon'>menu</mat-icon>
-        </button>
-    </div>
-    <div class="left-part">
-        <!-- <button fxHide.lt-md>
-            <mat-icon>
-                more_vert
-            </mat-icon>
-        </button> -->
-        &nbsp;&nbsp; {{title}}
-    </div>
-    <span class="example-spacer"></span>
-    <div class='right-part'>
-        <button mat-mini-fab mat-icon-button color="primary"
-        [matMenuTriggerFor]="menu">
-        <!-- #menuTrigger="matMenuTrigger"  (mouseover)="menuTrigger.openMenu()" -->
-        <!-- (mouseleave)="menuTrigger.closeMenu()" -->
-        <mat-icon mat-list-icon>person</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-            <mat-list>
-                <mat-list-item (click)='gotoProfilePage()'>
-                    <mat-icon mat-list-icon>person</mat-icon>
-                    <div mat-line>Profile</div>
-                </mat-list-item>
-                <mat-list-item (click)='openPasswordDialog()'>
-                    <mat-icon mat-list-icon>lock</mat-icon>
-                    <div mat-line>Reset Password</div>
-                </mat-list-item>
-                <mat-list-item (click)='logout()'>
-                    <mat-icon mat-list-icon>exit_to_app</mat-icon>
-                    <div mat-line>Logout</div>
-                </mat-list-item>
-               
-            </mat-list>
-        </mat-menu>
-    </div>
+<div class="modern-navbar">
+  <!-- Mobile menu button -->
+  <button 
+    mat-icon-button 
+    (click)="toggleSidenav()" 
+    class="mobile-menu-btn"
+    aria-label="Toggle navigation menu"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
 
-</mat-toolbar>
+  <!-- Page title section -->
+  <div class="navbar-title-section">
+    <h1 class="page-title">{{ title }}</h1>
+    <div class="breadcrumb" *ngIf="getBreadcrumb()">
+      <mat-icon class="breadcrumb-icon">chevron_right</mat-icon>
+      <span class="breadcrumb-text">{{ getBreadcrumb() }}</span>
+    </div>
+  </div>
+
+  <!-- Spacer -->
+  <div class="navbar-spacer"></div>
+
+  <!-- Action buttons -->
+  <div class="navbar-actions">
+    <!-- Notifications -->
+    <button 
+      mat-icon-button 
+      class="action-btn notification-btn"
+      [matMenuTriggerFor]="notificationMenu"
+      aria-label="Notifications"
+    >
+      <mat-icon [matBadge]="notificationCount" matBadgeColor="warn" matBadgeSize="small">
+        notifications
+      </mat-icon>
+    </button>
+
+    <!-- Search -->
+    <button 
+      mat-icon-button 
+      class="action-btn search-btn"
+      aria-label="Search"
+    >
+      <mat-icon>search</mat-icon>
+    </button>
+
+    <!-- User profile -->
+    <div class="user-profile-section">
+      <button 
+        class="user-profile-btn"
+        [matMenuTriggerFor]="userMenu"
+        aria-label="User menu"
+      >
+        <div class="user-avatar">
+          <mat-icon class="avatar-icon">person</mat-icon>
+        </div>
+        <div class="user-info">
+          <span class="user-name">{{ user?.fullName || 'User' }}</span>
+          <span class="user-role">{{ user?.company?.companyName || 'Company' }}</span>
+        </div>
+        <mat-icon class="dropdown-icon">expand_more</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Notification Menu -->
+  <mat-menu #notificationMenu="matMenu" class="notification-menu">
+    <div class="menu-header">
+      <h3 class="menu-title">Notifications</h3>
+      <button mat-button class="mark-read-btn">Mark all read</button>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="notification-list">
+      <div class="notification-item">
+        <mat-icon class="notification-icon">info</mat-icon>
+        <div class="notification-content">
+          <p class="notification-text">System maintenance scheduled</p>
+          <span class="notification-time">2 hours ago</span>
+        </div>
+      </div>
+      <div class="notification-item">
+        <mat-icon class="notification-icon">group_add</mat-icon>
+        <div class="notification-content">
+          <p class="notification-text">New user registered</p>
+          <span class="notification-time">1 day ago</span>
+        </div>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="menu-footer">
+      <button mat-button class="view-all-btn">View all notifications</button>
+    </div>
+  </mat-menu>
+
+  <!-- User Menu -->
+  <mat-menu #userMenu="matMenu" class="user-menu">
+    <div class="user-menu-header">
+      <div class="user-menu-avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+      <div class="user-menu-info">
+        <h4 class="user-menu-name">{{ user?.fullName }}</h4>
+        <p class="user-menu-company">{{ user?.company?.companyName }}</p>
+        <p class="user-menu-role">HR Administrator</p>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    
+    <button mat-menu-item (click)="gotoProfilePage()" class="menu-item">
+      <mat-icon class="menu-item-icon">person_outline</mat-icon>
+      <span class="menu-item-text">View Profile</span>
+    </button>
+    
+    <button mat-menu-item class="menu-item">
+      <mat-icon class="menu-item-icon">settings</mat-icon>
+      <span class="menu-item-text">Settings</span>
+    </button>
+    
+    <button mat-menu-item (click)="openPasswordDialog()" class="menu-item">
+      <mat-icon class="menu-item-icon">lock_outline</mat-icon>
+      <span class="menu-item-text">Change Password</span>
+    </button>
+    
+    <mat-divider></mat-divider>
+    
+    <button mat-menu-item (click)="logout()" class="menu-item logout-item">
+      <mat-icon class="menu-item-icon">logout</mat-icon>
+      <span class="menu-item-text">Sign Out</span>
+    </button>
+  </mat-menu>
+</div>

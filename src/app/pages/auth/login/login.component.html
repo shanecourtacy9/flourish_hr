@@ -1,28 +1,128 @@
-<div class="login-container">
-    <div class="background"></div>
-    <mat-card>
-        <div class='card-header'>
-            Login
+<div class="modern-login-container">
+  <!-- Background with gradient overlay -->
+  <div class="background-wrapper">
+    <div class="background-image"></div>
+    <div class="gradient-overlay"></div>
+  </div>
+
+  <!-- Main login card -->
+  <div class="login-card-wrapper">
+    <div class="login-card modern-card glass-effect">
+      <!-- Header with logo and title -->
+      <div class="login-header">
+        <div class="logo-container">
+          <img src="assets/img/flourish-logo.png" alt="Flourish" class="logo">
         </div>
-        <mat-card-content>
-            <form [formGroup]='loginForm' (ngSubmit)="onLogin()">
-                <div fxLayout="row wrap">
-                    <mat-form-field fxFlexFill>
-                        <input matInput formControlName="email" type="email" placeholder="Email">
-                    </mat-form-field>
-                    <mat-form-field fxFlexFill>
-                        <input matInput formControlName="password" type="password" placeholder="password">
-                    </mat-form-field>
-                    <div fxFlexFill>
-                        <button type="submit" mat-raised-button color="primary" class='button-uppercase'>Let's go</button>
-                    </div>
-                </div>
-            </form>
-            <div fxLayout="row wrap">
-                <div fxFlexFill>
-                    <button mat-Stroked-button (click)='resetPassword()'>Forgot password ?</button>
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
+        <h1 class="login-title">Welcome Back</h1>
+        <p class="login-subtitle" *ngIf="!showOTPField">Sign in to your HR Panel</p>
+        <p class="login-subtitle" *ngIf="showOTPField">Enter the OTP sent to your email</p>
+      </div>
+
+      <!-- Login form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+        <!-- OTP Field -->
+        <div class="form-group" *ngIf="showOTPField">
+          <label class="form-label">Verification Code</label>
+          <mat-form-field appearance="outline" class="modern-form-field">
+            <input
+              matInput
+              formControlName="otp"
+              type="text"
+              placeholder="Enter 6-digit code"
+              class="modern-input"
+            />
+            <mat-icon matSuffix class="input-icon">verified_user</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group" *ngIf="!showOTPField">
+          <label class="form-label">Email Address</label>
+          <mat-form-field appearance="outline" class="modern-form-field">
+            <input
+              matInput
+              formControlName="email"
+              type="email"
+              placeholder="your.email@company.com"
+              class="modern-input"
+            />
+            <mat-icon matSuffix class="input-icon">email</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group" *ngIf="!showOTPField">
+          <label class="form-label">Password</label>
+          <mat-form-field appearance="outline" class="modern-form-field">
+            <input
+              matInput
+              formControlName="password"
+              [type]="hidePassword ? 'password' : 'text'"
+              placeholder="Enter your password"
+              class="modern-input"
+            />
+            <button
+              type="button"
+              mat-icon-button
+              matSuffix
+              (click)="hidePassword = !hidePassword"
+              class="password-toggle"
+            >
+              <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          class="login-button modern-button-primary"
+          [disabled]="loginForm.invalid"
+        >
+          <span *ngIf="!showOTPField">Sign In</span>
+          <span *ngIf="showOTPField">Verify Code</span>
+          <mat-icon class="button-icon">arrow_forward</mat-icon>
+        </button>
+      </form>
+
+      <!-- Action buttons -->
+      <div class="login-actions">
+        <button 
+          mat-stroked-button 
+          (click)="resetPassword()" 
+          class="action-button"
+          *ngIf="!showOTPField"
+        >
+          <mat-icon>lock_reset</mat-icon>
+          Forgot Password?
+        </button>
+        
+        <button 
+          mat-stroked-button 
+          (click)="sendOTP()" 
+          class="action-button"
+          *ngIf="showResendOTP"
+        >
+          <mat-icon>refresh</mat-icon>
+          Resend Code
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <div class="login-footer">
+        <p class="footer-text">
+          Powered by <span class="brand-text">Flourish</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating elements for visual interest -->
+  <div class="floating-elements">
+    <div class="floating-circle circle-1"></div>
+    <div class="floating-circle circle-2"></div>
+    <div class="floating-circle circle-3"></div>
+  </div>
 </div>

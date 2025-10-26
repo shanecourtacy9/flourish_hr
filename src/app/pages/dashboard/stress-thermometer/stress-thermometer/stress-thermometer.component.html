@@ -1,0 +1,104 @@
+<div class="page" *ngIf="!loading && !error" #fsContainer>
+  <header class="header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1>{{ surveyName || 'Stress Thermometer' }}</h1>
+        <p *ngIf="surveyDescription" class="description">{{ surveyDescription }}</p>
+      </div>
+      <div class="stats-badge" *ngIf="aggregates?.totalResponses">
+        <div class="badge-content">
+          <span class="badge-number">{{ aggregates.totalResponses }}</span>
+          <span class="badge-label">Total Responses</span>
+        </div>
+      </div>
+      <button type="button" class="fullscreen-btn" (click)="toggleFullscreen()">
+        <span *ngIf="!isFullscreen">⛶ Fullscreen</span>
+        <span *ngIf="isFullscreen">✕ Exit</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="readings" *ngIf="getAggregatesToDisplay()?.length">
+    <article
+      class="reading-card"
+      *ngFor="let reading of getAggregatesToDisplay(); let i = index; trackBy: trackByQuestionId"
+      [style.animation-delay]="i * 0.1 + 's'"
+    >
+ 
+
+      <div class="card-body">
+        <h3>Overall <br>{{ reading.prompt || reading.questionId }}</h3>
+        <span class="response-count">{{ reading.count }} responses</span>
+        <div class="thermometer-container">
+          <div class="thermometer-wrapper">
+            <!-- <span class="max-label">{{ getGoalValue(reading) }}</span> -->
+            
+            <div class="glass-tube">
+              <div 
+                class="mercury-fill"
+                [style.height]="getFillPercentage(reading) + '%'"
+              >
+                <span 
+                  class="fill-gradient"
+                  [style.background]="'linear-gradient(180deg, ' + getFillColor(reading) + ' 0%, ' + getFillColor(reading) + 'dd 100%)'"
+                ></span>
+              </div>
+              
+              <div class="value-indicator" [style.bottom]="getFillPercentage(reading) + '%'">
+                <span class="value-bubble" [style.background-color]="getFillColor(reading)">
+                  {{ getDisplayValue(reading) | number: '1.0-1' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="thermometer-bulb">
+              <div class="bulb-inner" [style.background]="getFillColor(reading)">
+                <div class="bulb-shine"></div>
+              </div>
+              <div class="bulb-connector" [style.background]="getFillColor(reading)"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric-item primary">
+            <span class="metric-value" [style.color]="getFillColor(reading)">
+              {{ getDisplayValue(reading) | number: '1.0-1' }}
+            </span>
+            <span class="metric-label">Average Score</span>
+          </div>
+          
+          <div class="metric-divider"></div>
+          
+          <div class="metric-item">
+            <span class="metric-range">{{ getLabel(reading) }}</span>
+            <span class="metric-label">Scale Range</span>
+          </div>
+        </div>
+
+        <div class="progress-bar">
+          <div 
+            class="progress-fill" 
+            [style.width]="getFillPercentage(reading) + '%'"
+            [style.background]="'linear-gradient(90deg, ' + getFillColor(reading) + ' 0%, ' + getFillColor(reading) + 'cc 100%)'"
+          ></div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  
+</div>
+
+<div class="loading-state" *ngIf="loading && !error">
+  <div class="loader">
+    <div class="spinner"></div>
+    <p>Loading stress thermometer data...</p>
+  </div>
+</div>
+
+<div class="error-state" *ngIf="error">
+  <div class="error-icon">⚠️</div>
+  <h3>Unable to Load Data</h3>
+  <p>{{ error }}</p>
+</div>

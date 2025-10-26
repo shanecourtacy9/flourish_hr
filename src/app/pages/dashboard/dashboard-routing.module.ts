@@ -29,6 +29,11 @@ const routes: Routes = [
           .then(m => m.ProgrammesModule)
       },
       {
+        path: 'stress-thermometer',
+        loadChildren: () => import('./stress-thermometer/stress-thermometer.module')
+          .then(m => m.StressThermometerModule)
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'

@@ -4,11 +4,10 @@
 
 export const environment = {
   production: false,
-  // url: 'http://34.87.94.22'
-  // url: 'http://192.168.0.118:3000'
-  // url: 'http://192.168.1.123:3000'
-  url: 'https://production-dot-uphealthgcp.et.r.appspot.com',
+  url: "http://localhost:8080",
+  // url: "https://staging-dot-uphealthgcp.et.r.appspot.com",
 
+  // url: "https://production-dot-uphealthgcp.et.r.appspot.com",
 };
 
 /*

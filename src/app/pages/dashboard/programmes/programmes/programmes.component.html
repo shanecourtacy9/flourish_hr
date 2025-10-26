@@ -1,153 +1,401 @@
-<div class='user-page-container'>
-    <div class="skeleton-loader-item">
-        <ngx-skeleton-loader *ngIf='!initializedLoading' count="8" [theme]="{ 'border-radius': '0', height: '10vh' }">
-        </ngx-skeleton-loader>
+<div class="modern-programmes-page">
+  <!-- Loading skeleton -->
+  <div class="skeleton-container" *ngIf="!initializedLoading">
+    <ngx-skeleton-loader
+      count="8"
+      [theme]="{ 'border-radius': '12px', height: '200px', 'margin-bottom': '16px' }"
+    >
+    </ngx-skeleton-loader>
+  </div>
+
+  <!-- Main content -->
+  <div class="programmes-content" *ngIf="initializedLoading && isMember">
+    <!-- Header Section -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="title-section">
+          <h1 class="page-title">Programme Management</h1>
+          <p class="page-subtitle">Organize and manage your wellness programmes</p>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+          <div class="stat-item">
+            <div class="stat-icon">
+              <mat-icon>event</mat-icon>
+            </div>
+            <div class="stat-content">
+              <span class="stat-number">{{ getTotalProgrammes() }}</span>
+              <span class="stat-label">Total Programmes</span>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-icon active">
+              <mat-icon>schedule</mat-icon>
+            </div>
+            <div class="stat-content">
+              <span class="stat-number">{{ getUpcomingProgrammes() }}</span>
+              <span class="stat-label">Upcoming</span>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-icon participants">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-content">
+              <span class="stat-number">{{ getTotalParticipants() }}</span>
+              <span class="stat-label">Participants</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <ng-container *ngIf="isMember">
-        <div class='table-card-container' [ngStyle]="{'opacity':initializedLoading? 1 : 0 }">
-            <mat-card>
-                <div class='table-toolbar' fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign='start center'>
-                    <mat-form-field autocomplete="off" appearance="outline" fxFlex="1 1 auto" fxFlexOffset='20px'
-                        fxFlex.lt-md="100%">
-                        <mat-label>Enter a date range</mat-label>
-                        <mat-date-range-input [formGroup]="rangeFormGroup" [rangePicker]="picker">
-                            <input matStartDate placeholder="Start date" formControlName="startDate">
-                            <input matEndDate placeholder="End date" formControlName="endDate">
-                        </mat-date-range-input>
-                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-date-range-picker #picker></mat-date-range-picker>
-                    </mat-form-field>
-                    <span class='span-space'></span>
-                    <div fxFlexOffset.lt-md='20px' fxFlex.lt-md="100%" class='button-container' fxFlexAlign='center'>
-                        <button mat-flat-button color="primary" class='text-uppercase' (click)='addNewProgramme()'>
-                            add new
-                        </button>
-                        <button mat-flat-button color="primary" class='text-uppercase' fxFlexOffset='20px'
-                            fxFlexOffset.lt-sm='10px' (click)='gotoBatchUploadProgrammesPage()'>
-                            batch upload
-                        </button>
-                    </div>
-                </div>
+
+    <!-- Controls Section -->
+    <div class="controls-section modern-card">
+      <div class="controls-content">
+        <!-- Date Range Filter -->
+        <div class="filter-section">
+          <mat-form-field appearance="outline" class="date-range-field">
+            <mat-label>Filter by date range</mat-label>
+            <mat-date-range-input [formGroup]="rangeFormGroup" [rangePicker]="picker">
+              <input matStartDate placeholder="Start date" formControlName="startDate">
+              <input matEndDate placeholder="End date" formControlName="endDate">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+          </mat-form-field>
+          
+          <!-- View Toggle -->
+          <mat-button-toggle-group class="view-toggle" [(ngModel)]="viewMode">
+            <mat-button-toggle value="cards">
+              <mat-icon>view_module</mat-icon>
+              Cards
+            </mat-button-toggle>
+            <mat-button-toggle value="table">
+              <mat-icon>table_rows</mat-icon>
+              Table
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button
+            mat-stroked-button
+            class="action-btn secondary"
+            (click)="gotoBatchUploadProgrammesPage()"
+          >
+            <mat-icon>upload</mat-icon>
+            Batch Upload
+          </button>
+          
+          <button
+            mat-raised-button
+            color="primary"
+            class="action-btn primary"
+            (click)="addNewProgramme()"
+          >
+            <mat-icon>add</mat-icon>
+            Add Programme
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section">
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="loading$">
+        <ngx-skeleton-loader
+          count="6"
+          [theme]="{ 'border-radius': '12px', height: '200px', 'margin-bottom': '16px' }"
+        >
+        </ngx-skeleton-loader>
+      </div>
+
+      <!-- Cards View -->
+      <div class="programmes-grid" *ngIf="!loading$ && viewMode === 'cards'">
+        <div 
+          class="programme-card modern-card hover-lift"
+          *ngFor="let programme of programmes; let i = index"
+          [class.outdated]="programme.isOutdated"
+          [class.low-registration]="programme.isLower"
+        >
+          <!-- Card Header -->
+          <div class="card-header">
+            <div class="programme-status">
+              <span 
+                class="status-badge" 
+                [ngClass]="getProgrammeStatusClass(programme)"
+              >
+                <mat-icon class="status-icon">{{ getProgrammeStatusIcon(programme) }}</mat-icon>
+                {{ getProgrammeStatus(programme) }}
+              </span>
+            </div>
+            
+            <div class="card-actions">
+              <button
+                mat-icon-button
+                class="action-button"
+                [matMenuTriggerFor]="cardMenu"
+                (click)="$event.stopPropagation()"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              
+              <mat-menu #cardMenu="matMenu">
+                <button mat-menu-item (click)="editProgramme(programme)">
+                  <mat-icon>edit</mat-icon>
+                  Edit Programme
+                </button>
+                <button 
+                  mat-menu-item 
+                  (click)="recruitUsrs(programme)"
+                  [disabled]="programme.isOutdated || programme.isClicked"
+                >
+                  <mat-icon>person_add</mat-icon>
+                  Recruit Users
+                </button>
+                <button 
+                  mat-menu-item 
+                  (click)="reminderUsers(programme)"
+                  [disabled]="programme.isOutdated || programme.isClicked"
+                >
+                  <mat-icon>notifications</mat-icon>
+                  Send Reminders
+                </button>
                 <mat-divider></mat-divider>
-                <mat-card-content>
-                    <ngx-skeleton-loader *ngIf='loading$' count="4" [theme]="{ 'border-radius': '0', height: '10vh' }">
-                    </ngx-skeleton-loader>
-                    <table mat-table [dataSource]="programmes" matSort matSortDisableClear matSortDirection="desc"
-                        *ngIf='!loading$'>
-                        <!-- Index coloum -->
-                        <ng-container matColumnDef="index">
-                            <th mat-header-cell *matHeaderCellDef> Index </th>
-                            <td mat-cell *matCellDef="let i = index;">
-                                {{i + (paginator?.pageIndex * paginator?.pageSize)+1}}
-                            </td>
-                        </ng-container>
-                        <!--name -->
-                        <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef>
-                                Name
-                            </th>
-                            <td mat-cell *matCellDef="let row" (click)="editProgramme(row)">
-                                {{row?.name}}
-                            </td>
-                        </ng-container>
-                        <!--date -->
-                        <ng-container matColumnDef="date">
-                            <th mat-header-cell *matHeaderCellDef>
-                                Date
-                            </th>
-                            <td mat-cell *matCellDef="let row">
-                                {{row?.date |date}}
-                            </td>
-                        </ng-container>
-                        <!--startTime -->
-                        <ng-container matColumnDef="startTime">
-                            <th mat-header-cell *matHeaderCellDef>
-                                Start Time
-                            </th>
-                            <td mat-cell *matCellDef="let row">
-                                {{row?.startTime}}
-                            </td>
-                        </ng-container>
-                        <!-- endTime -->
-                        <ng-container matColumnDef='endTime'>
-                            <th mat-header-cell *matHeaderCellDef>End Time</th>
-                            <td mat-cell *matCellDef='let row'>
-                                {{row.endTime}}
-                            </td>
-                        </ng-container>
-                        <!-- Registered -->
-                        <ng-container matColumnDef="registeredNum">
-                            <th mat-header-cell *matHeaderCellDef>
-                                Registered
-                            </th>
-                            <td mat-cell *matCellDef="let row" [ngClass]="{'highlight':row?.isLower}">
-                                {{row?.registeredUsers.length}}/{{row?.capacity}}
-                            </td>
-                        </ng-container>
-                        <!-- Reminders -->
-                        <ng-container matColumnDef='reminders'>
-                            <th mat-header-cell *matHeaderCellDef>Reminders</th>
-                            <td mat-cell *matCellDef='let row'>
-                                <button mat-stroked-button color='primary' [disabled]="row.isOutdated ||row.isClicked"
-                                    class='text-uppercase' (click)='recruitUsrs(row)'>
-                                    Recruit
-                                </button>&nbsp;|
-                                <button mat-stroked-button color='primary' class='text-uppercase'
-                                    [disabled]="row.isOutdated||row.isClicked" (click)='reminderUsers(row)'>
-                                    reminder
-                                </button>
-                            </td>
-                        </ng-container>
-                        <!-- Actions -->
-                        <ng-container matColumnDef='actions'>
-                            <th mat-header-cell *matHeaderCellDef>Actions</th>
-                            <td mat-cell *matCellDef='let row;let i = index;'>
-                                <button mat-icon-button mat-stroked-button color='primary' (click)="editProgramme(row)">
-                                    <mat-icon class='white-icon'>create</mat-icon>
-                                </button>&nbsp;|
-                                <button mat-icon-button mat-stroked-button color='primary'
-                                [disabled]="row.isClicked"(click)='deleteProgramme(row)'>
-                                    <mat-icon class='white-icon'>delete</mat-icon>
-                                </button>
-                                <!-- <button mat-icon-button mat-stroked-button color='primary'
-                                [disabled]="row.isClicked"(click)='export(row)'>
-                                    <mat-icon class='white-icon'>export</mat-icon>
-                                </button> -->
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns:displayedColumns;">
-                        </tr>
-                    </table>
-                    <mat-paginator [length]='totalProgrammes' [pageSizeOptions]="[20, 30]"></mat-paginator>
-                </mat-card-content>
-            </mat-card>
+                <button 
+                  mat-menu-item 
+                  (click)="deleteProgramme(programme)"
+                  [disabled]="programme.isClicked"
+                  class="delete-action"
+                >
+                  <mat-icon>delete</mat-icon>
+                  Delete Programme
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+
+          <!-- Card Content -->
+          <div class="card-content" (click)="editProgramme(programme)">
+            <h3 class="programme-title">{{ programme?.name }}</h3>
+            
+            <div class="programme-details">
+              <div class="detail-item">
+                <mat-icon class="detail-icon">calendar_today</mat-icon>
+                <span class="detail-text">{{ programme?.date | date:'mediumDate' }}</span>
+              </div>
+              
+              <div class="detail-item">
+                <mat-icon class="detail-icon">access_time</mat-icon>
+                <span class="detail-text">{{ programme?.startTime }} - {{ programme?.endTime }}</span>
+              </div>
+              
+              <div class="detail-item">
+                <mat-icon class="detail-icon">people</mat-icon>
+                <span class="detail-text">
+                  {{ programme?.registeredUsers?.length || 0 }} / {{ programme?.capacity }} registered
+                </span>
+              </div>
+            </div>
+            
+            <!-- Registration Progress -->
+            <div class="registration-progress">
+              <div class="progress-header">
+                <span class="progress-label">Registration Progress</span>
+                <span class="progress-percentage">
+                  {{ getRegistrationPercentage(programme) }}%
+                </span>
+              </div>
+              <mat-progress-bar 
+                mode="determinate" 
+                [value]="getRegistrationPercentage(programme)"
+                [color]="getProgressBarColor(programme)"
+              ></mat-progress-bar>
+            </div>
+          </div>
+
+          <!-- Card Footer -->
+          <div class="card-footer">
+            <div class="footer-actions">
+              <button
+                mat-stroked-button
+                class="footer-btn recruit"
+                [disabled]="programme.isOutdated || programme.isClicked"
+                (click)="recruitUsrs(programme); $event.stopPropagation()"
+              >
+                <mat-icon>person_add</mat-icon>
+                Recruit
+              </button>
+              
+              <button
+                mat-stroked-button
+                class="footer-btn reminder"
+                [disabled]="programme.isOutdated || programme.isClicked"
+                (click)="reminderUsers(programme); $event.stopPropagation()"
+              >
+                <mat-icon>notifications</mat-icon>
+                Remind
+              </button>
+            </div>
+          </div>
         </div>
-    </ng-container>
+      </div>
 
-    <ng-container *ngIf='!isMember'>
-        <div class='non-member'>
-            <mat-card>
-                <mat-card-header>
-                    <mat-card-title>INDIVIDUAL</mat-card-title>
-                </mat-card-header>
-                <mat-card-content fxLayout="row wrap" fxLayoutAlign='center center'>
-                    <div class="icon">
-                        <i class="material-icons">weekend</i>
-                    </div>
-                    <div fxFlex='100%'>
-                        <h3>Free Version</h3>
-                    </div>
-                    <div fxFlex='100%'>
-                        <p>
-                            Upgrade to member and add new programmes
-                        </p>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+      <!-- Table View -->
+      <div class="table-container modern-card" *ngIf="!loading$ && viewMode === 'table'">
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="programmes" matSort matSortDisableClear matSortDirection="desc" class="modern-table">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef class="name-header">Programme</th>
+              <td mat-cell *matCellDef="let row" class="name-cell" (click)="editProgramme(row)">
+                <div class="programme-info">
+                  <h4 class="programme-name">{{ row?.name }}</h4>
+                  <span class="programme-date">{{ row?.date | date:'mediumDate' }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Time Column -->
+            <ng-container matColumnDef="time">
+              <th mat-header-cell *matHeaderCellDef class="time-header">Time</th>
+              <td mat-cell *matCellDef="let row" class="time-cell">
+                <div class="time-info">
+                  <span class="time-range">{{ row?.startTime }} - {{ row?.endTime }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Registration Column -->
+            <ng-container matColumnDef="registration">
+              <th mat-header-cell *matHeaderCellDef class="registration-header">Registration</th>
+              <td mat-cell *matCellDef="let row" class="registration-cell">
+                <div class="registration-info">
+                  <span class="registration-count" [ngClass]="{'low-registration': row?.isLower}">
+                    {{ row?.registeredUsers?.length || 0 }} / {{ row?.capacity }}
+                  </span>
+                  <mat-progress-bar 
+                    mode="determinate" 
+                    [value]="getRegistrationPercentage(row)"
+                    [color]="getProgressBarColor(row)"
+                    class="mini-progress"
+                  ></mat-progress-bar>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef class="status-header">Status</th>
+              <td mat-cell *matCellDef="let row" class="status-cell">
+                <span 
+                  class="status-badge table-badge" 
+                  [ngClass]="getProgrammeStatusClass(row)"
+                >
+                  <mat-icon class="status-icon">{{ getProgrammeStatusIcon(row) }}</mat-icon>
+                  {{ getProgrammeStatus(row) }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+              <td mat-cell *matCellDef="let row" class="actions-cell">
+                <div class="table-actions">
+                  <button
+                    mat-icon-button
+                    class="action-button edit"
+                    (click)="editProgramme(row); $event.stopPropagation()"
+                    matTooltip="Edit programme"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  
+                  <button
+                    mat-icon-button
+                    class="action-button recruit"
+                    [disabled]="row.isOutdated || row.isClicked"
+                    (click)="recruitUsrs(row); $event.stopPropagation()"
+                    matTooltip="Recruit users"
+                  >
+                    <mat-icon>person_add</mat-icon>
+                  </button>
+                  
+                  <button
+                    mat-icon-button
+                    class="action-button reminder"
+                    [disabled]="row.isOutdated || row.isClicked"
+                    (click)="reminderUsers(row); $event.stopPropagation()"
+                    matTooltip="Send reminders"
+                  >
+                    <mat-icon>notifications</mat-icon>
+                  </button>
+                  
+                  <button
+                    mat-icon-button
+                    class="action-button delete"
+                    [disabled]="row.isClicked"
+                    (click)="deleteProgramme(row); $event.stopPropagation()"
+                    matTooltip="Delete programme"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="modern-header-row"></tr>
+            <tr 
+              mat-row 
+              *matRowDef="let row; columns: displayedColumns" 
+              class="modern-row"
+              [class.outdated]="row.isOutdated"
+            ></tr>
+          </table>
         </div>
+        
+        <!-- Pagination -->
+        <div class="table-footer">
+          <mat-paginator
+            [length]="totalProgrammes"
+            [pageSizeOptions]="[12, 24, 48]"
+            [pageSize]="12"
+            class="modern-paginator"
+            showFirstLastButtons
+          ></mat-paginator>
+        </div>
+      </div>
 
-    </ng-container>
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="!loading$ && programmes?.length === 0">
+        <mat-icon class="empty-icon">event_note</mat-icon>
+        <h3 class="empty-title">No programmes found</h3>
+        <p class="empty-description">Create your first programme to get started with organizing wellness sessions.</p>
+        <button mat-raised-button color="primary" (click)="addNewProgramme()">
+          <mat-icon>add</mat-icon>
+          Create First Programme
+        </button>
+      </div>
+    </div>
+  </div>
 
-
+  <!-- Non-member message -->
+  <div class="non-member-message modern-card" *ngIf="initializedLoading && !isMember">
+    <div class="message-content">
+      <mat-icon class="message-icon">lock</mat-icon>
+      <h3 class="message-title">Access Restricted</h3>
+      <p class="message-text">You need an active membership to access programme management features.</p>
+      <button mat-raised-button color="primary">
+        <mat-icon>card_membership</mat-icon>
+        Upgrade Membership
+      </button>
+    </div>
+  </div>
 </div>

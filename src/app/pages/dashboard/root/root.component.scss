@@ -1,4 +1,4 @@
-@import '~src/scss/variables';
+@import "~src/scss/variables";
 
 .layout-container {
   position: absolute;
@@ -11,8 +11,9 @@
     width: 265px;
     position: fixed;
     height: 100%;
-    background-color: rgba(34,42,69,.96)!important;
-    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42),
+      0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
     -webkit-transition: all 500ms;
     -moz-transition: all 500ms;
     transition: all 500ms;

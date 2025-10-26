@@ -1,0 +1,374 @@
+@import '~@angular/material/theming';
+
+// Load the core styles for Angular Material
+@include mat-core();
+
+// Brand color (kept from existing palette)
+$brand-primary-hex: #ff9b00;
+
+// Start from a base palette and override the 500 swatch to match brand exactly
+$brand-primary-base: mat-palette($mat-orange);
+$brand-primary: map-merge(
+  $brand-primary-base,
+  (
+    500: $brand-primary-hex,
+    default: 500,
+    contrast: map-merge(
+      map-get($brand-primary-base, contrast),
+      (
+        500: mat-contrast($brand-primary-base, 500)
+      )
+    )
+  )
+);
+
+$brand-accent: mat-palette($mat-grey, 600, 500, 700);
+$brand-warn: mat-palette($mat-red, 600, 500, 800);
+
+// Define light theme
+$app-theme: mat-light-theme($brand-primary, $brand-accent, $brand-warn);
+
+// Optional: custom typography for a lighter, modern feel
+$app-typography: mat-typography-config(
+  $font-family: 'Roboto, "Helvetica", "Arial", sans-serif',
+  $headline: mat-typography-level(32px, 44px, 300),
+  $title: mat-typography-level(24px, 32px, 300),
+  $subheading-2: mat-typography-level(20px, 28px, 300),
+  $subheading-1: mat-typography-level(16px, 24px, 300),
+  $body-2: mat-typography-level(14px, 22px, 400),
+  $body-1: mat-typography-level(14px, 22px, 300),
+  $caption: mat-typography-level(12px, 18px, 300),
+  $button: mat-typography-level(14px, 14px, 500)
+);
+
+// Apply theme and typography
+@include angular-material-theme($app-theme);
+@include angular-material-typography($app-typography);
+
+// CSS variables for modern design system
+:root {
+  // Orange Brand Colors
+  --color-primary: #{$brand-primary-hex};
+  --color-orange-50: #fff7ed;
+  --color-orange-100: #ffedd5;
+  --color-orange-200: #fed7aa;
+  --color-orange-300: #fdba74;
+  --color-orange-400: #fb923c;
+  --color-orange-500: #f97316;
+  --color-orange-600: #ea580c;
+  --color-orange-700: #c2410c;
+  --color-orange-800: #9a3412;
+  --color-orange-900: #7c2d12;
+
+  // Neutral Colors
+  --color-white: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  // Surface Colors
+  --color-surface: #ffffff;
+  --color-bg: #fafafa;
+  --color-bg-alt: #f3f4f6;
+
+  // Border Radius
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  // Shadows & Elevations
+  --elevation-1: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --elevation-2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --elevation-3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --elevation-4: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-orange: 0 10px 25px rgba(249, 115, 22, 0.15);
+  --shadow-orange-lg: 0 20px 40px rgba(249, 115, 22, 0.12);
+
+  // Spacing Scale
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  // Typography
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+
+  // Transitions
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
+
+// Global element refinements
+mat-toolbar {
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: saturate(180%) blur(6px);
+  -webkit-backdrop-filter: saturate(180%) blur(6px);
+  box-shadow: var(--elevation-1);
+}
+
+.mat-card, mat-card {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--elevation-2) !important;
+  transition: all 0.3s ease !important;
+}
+
+.mat-card:hover, mat-card:hover {
+  box-shadow: var(--elevation-3) !important;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  border-radius: var(--radius-md) !important;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  border-radius: var(--radius-md) !important;
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  border-color: var(--color-primary) !important;
+  border-width: 2px !important;
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-label {
+  color: var(--color-primary) !important;
+}
+
+.mat-raised-button, .mat-flat-button, .mat-stroked-button {
+  border-radius: var(--radius-md) !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+.mat-raised-button:hover, .mat-flat-button:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3) !important;
+}
+
+.mat-stroked-button {
+  border-width: 2px !important;
+}
+
+.mat-stroked-button:hover {
+  background: rgba(255, 155, 0, 0.05) !important;
+}
+
+// Enhanced Material Components
+.mat-checkbox-checked .mat-checkbox-background {
+  background-color: var(--color-primary) !important;
+}
+
+.mat-checkbox-frame {
+  border-radius: 4px !important;
+  border-width: 2px !important;
+}
+
+.mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: var(--color-primary) !important;
+}
+
+.mat-radio-button.mat-accent .mat-radio-outer-circle {
+  border-color: var(--color-primary) !important;
+}
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: var(--color-primary) !important;
+}
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background-color: rgba(255, 155, 0, 0.5) !important;
+}
+
+.mat-progress-bar .mat-progress-bar-fill::after {
+  background-color: var(--color-primary) !important;
+}
+
+.mat-progress-spinner circle, .mat-spinner circle {
+  stroke: var(--color-primary) !important;
+}
+
+// Enhanced Menu Styles
+.mat-menu-panel {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--elevation-3) !important;
+  border: 1px solid var(--color-gray-200) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.mat-menu-content {
+  padding: 8px 0 !important;
+}
+
+.mat-menu-item {
+  border-radius: 8px !important;
+  margin: 4px 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.mat-menu-item:hover {
+  background: var(--color-orange-50) !important;
+  color: var(--color-orange-700) !important;
+}
+
+// Enhanced Dialog Styles
+.mat-dialog-container {
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--elevation-4) !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.mat-dialog-title {
+  padding: 24px 24px 16px 24px !important;
+  margin: 0 !important;
+  font-weight: 600 !important;
+  color: var(--color-gray-900) !important;
+}
+
+.mat-dialog-content {
+  padding: 0 24px !important;
+  margin: 0 !important;
+}
+
+.mat-dialog-actions {
+  padding: 16px 24px 24px 24px !important;
+  margin: 0 !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
+
+// Enhanced Snackbar
+.mat-snack-bar-container {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--elevation-3) !important;
+  background: var(--color-gray-900) !important;
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+// Enhanced Tabs
+.mat-tab-group.mat-primary .mat-tab-label.mat-tab-label-active {
+  color: var(--color-primary) !important;
+}
+
+.mat-tab-group.mat-primary .mat-ink-bar {
+  background-color: var(--color-primary) !important;
+  height: 3px !important;
+  border-radius: 2px !important;
+}
+
+.mat-tab-label {
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+.mat-tab-label:hover {
+  color: var(--color-primary) !important;
+  background: rgba(255, 155, 0, 0.05) !important;
+}
+
+// Enhanced Paginator
+.mat-paginator {
+  border-radius: var(--radius-md) !important;
+  background: var(--color-gray-50) !important;
+  border: 1px solid var(--color-gray-200) !important;
+}
+
+.mat-paginator-page-size-select {
+  margin: 0 8px !important;
+}
+
+.mat-paginator-range-actions {
+  gap: 8px !important;
+}
+
+// Enhanced Table
+.mat-table {
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden !important;
+  box-shadow: var(--elevation-1) !important;
+}
+
+.mat-header-row {
+  background: var(--color-gray-50) !important;
+}
+
+.mat-row:hover {
+  background: var(--color-orange-50) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.mat-cell, .mat-header-cell {
+  border-bottom: 1px solid var(--color-gray-200) !important;
+}
+
+// Enhanced Button Toggle
+.mat-button-toggle-group {
+  border-radius: var(--radius-md) !important;
+  overflow: hidden !important;
+  box-shadow: var(--elevation-1) !important;
+}
+
+.mat-button-toggle {
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.mat-button-toggle-checked {
+  background: var(--color-primary) !important;
+  color: white !important;
+}
+
+.mat-button-toggle:hover {
+  background: var(--color-orange-50) !important;
+}
+
+// Enhanced Date Picker
+.mat-datepicker-content {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--elevation-3) !important;
+}
+
+.mat-calendar-header {
+  background: var(--color-orange-50) !important;
+  border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+}
+
+.mat-calendar-body-selected {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+.mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: var(--color-primary) !important;
+}
+
+

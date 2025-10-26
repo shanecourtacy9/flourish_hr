@@ -1,13 +1,52 @@
-<div class="logo" [style.color]="normalFontColor">
-  <img src="../../assets/img/flourish-logo.png" class="logo-img" alt="logo" />
+<div class="modern-sidebar">
+  <!-- Header Section -->
+  <div class="sidebar-header">
+    <div class="logo-container">
+      <img src="../../assets/img/flourish-logo.png" class="logo-img" alt="Flourish HR Panel" />
+      <div class="brand-text">
+        <h2 class="brand-title">Flourish</h2>
+        <p class="brand-subtitle">HR Panel</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Section -->
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <h3 class="nav-section-title">Main Navigation</h3>
+      <ul class="nav-list">
+        <li 
+          *ngFor="let menuItem of menuItems" 
+          class="nav-item"
+          routerLinkActive="nav-item-active"
+          [routerLinkActiveOptions]="{ exact: false }"
+        >
+          <a 
+            [routerLink]="[menuItem.path]" 
+            class="nav-link"
+            (click)="changeTitle(menuItem)"
+          >
+            <div class="nav-icon-wrapper">
+              <mat-icon class="nav-icon">{{ menuItem.icon }}</mat-icon>
+            </div>
+            <span class="nav-text">{{ menuItem.title }}</span>
+            <div class="nav-indicator"></div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Footer Section -->
+  <div class="sidebar-footer">
+    <div class="footer-content">
+      <div class="version-info">
+        <mat-icon class="version-icon">info_outline</mat-icon>
+        <div class="version-text">
+          <span class="version-label">Version</span>
+          <span class="version-number">2.1.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<mat-nav-list>
-  <mat-divider [style.background-color]="dividerBgColor"></mat-divider>
-  <mat-list-item *ngFor="let menuItem of menuItems" routerLinkActive #rla="routerLinkActive"
-    [ngClass]="rla.isActive? 'active' : ''" (click)='changeTitle(menuItem)'>
-    <a [routerLink]="[menuItem.path]">
-      <mat-icon>{{menuItem.icon}}</mat-icon>
-      <span>{{menuItem.title}}</span>
-    </a>
-  </mat-list-item>
-</mat-nav-list>

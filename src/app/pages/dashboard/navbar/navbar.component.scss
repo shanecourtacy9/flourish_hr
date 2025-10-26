@@ -1,44 +1,480 @@
-@import '~src/scss/variables';
-.example-spacer {
-    flex: 1 1 auto;
+/* Modern Navbar Styles */
+
+.modern-navbar {
+  display: flex;
+  align-items: center;
+  height: 72px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin-left: 280px; /* Account for sidebar width */
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Mobile menu button */
+.mobile-menu-btn {
+  display: none;
+  margin-right: 16px;
+  color: #374151;
+}
+
+.mobile-menu-btn mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+/* Title section */
+.navbar-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.breadcrumb-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+}
+
+.breadcrumb-text {
+  font-weight: 500;
+}
+
+/* Spacer */
+.navbar-spacer {
+  flex: 1;
+}
+
+/* Action buttons */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: #6b7280;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.action-btn:hover {
+  background: #f3f4f6;
+  color: #ff9b00;
+}
+
+.action-btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* User profile section */
+.user-profile-section {
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid #e5e7eb;
+}
+
+.user-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.user-profile-btn:hover {
+  background: #f3f4f6;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff9b00, #f97316);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+}
+
+.avatar-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  text-align: left;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+.user-role {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.dropdown-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #9ca3af;
+  transition: transform 0.3s ease;
+}
+
+.user-profile-btn:hover .dropdown-icon {
+  color: #ff9b00;
+  transform: rotate(180deg);
+}
+
+/* Menu Styles */
+::ng-deep .mat-menu-panel {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #e5e7eb !important;
+  overflow: hidden !important;
+}
+
+/* User Menu */
+::ng-deep .user-menu .mat-menu-content {
+  padding: 0 !important;
+  min-width: 280px !important;
+}
+
+.user-menu-header {
+  padding: 20px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-menu-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff9b00, #f97316);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.user-menu-avatar mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.user-menu-info {
+  flex: 1;
+}
+
+.user-menu-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.user-menu-company {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 2px 0;
+  font-weight: 500;
+}
+
+.user-menu-role {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0;
+  font-weight: 500;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.menu-item:hover {
+  background: #f9fafb;
+}
+
+.menu-item-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+}
+
+.menu-item-text {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.logout-item {
+  color: #ef4444;
+}
+
+.logout-item .menu-item-icon,
+.logout-item .menu-item-text {
+  color: #ef4444;
+}
+
+.logout-item:hover {
+  background: #fef2f2;
+}
+
+/* Notification Menu */
+::ng-deep .notification-menu .mat-menu-content {
+  padding: 0 !important;
+  min-width: 320px !important;
+  max-width: 400px !important;
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.menu-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.mark-read-btn {
+  font-size: 12px;
+  color: #ff9b00;
+  padding: 4px 8px;
+  min-width: auto;
+}
+
+.notification-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.2s ease;
+}
+
+.notification-item:hover {
+  background: #f9fafb;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #ff9b00;
+  margin-top: 2px;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-text {
+  font-size: 14px;
+  color: #374151;
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.menu-footer {
+  padding: 12px 20px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.view-all-btn {
+  width: 100%;
+  color: #ff9b00;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .modern-navbar {
+    margin-left: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-navbar {
+    margin-left: 0;
+    padding: 0 16px;
   }
 
-  mat-toolbar{
-    height:60px;
-  }
-  :host ::ng-deep mat-toolbar{
-    background:rgba(53, 78, 112, 0.96)!important;
+  .mobile-menu-btn {
+    display: block;
   }
 
-  mat-list{
-    width:200px;
-  }
-  ::ng-deep .mat-menu-content{
-    background-color: rgba(53, 78, 112, 0.96);
-  }
-  
-  .logo-img{
-    width: 45px;
-    border-radius: 50%;
+  .page-title {
+    font-size: 20px;
   }
 
-  .navbar-avatar {
-    margin: 0 1rem !important;
-    height:60px;
+  .user-profile-btn {
+    min-width: auto;
+    padding: 8px 12px;
   }
 
-  .left-part{
-    text-transform: uppercase;
-    color:#eee
+  .user-info {
+    display: none;
   }
 
-  .white-icon{
-    color:$white
+  .navbar-actions {
+    gap: 4px;
   }
 
-  mat-list-item{
-    display: flex;
-    align-items: center;
-    color:$white !important;
-    border-radius: 5px;
+  .action-btn {
+    width: 40px;
+    height: 40px;
   }
+
+  ::ng-deep .user-menu .mat-menu-content,
+  ::ng-deep .notification-menu .mat-menu-content {
+    min-width: 260px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-navbar {
+    height: 64px;
+    padding: 0 12px;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .breadcrumb {
+    display: none;
+  }
+
+  .user-profile-section {
+    margin-left: 8px;
+    padding-left: 8px;
+  }
+}
+
+/* Badge customization */
+::ng-deep .mat-badge-content {
+  background: #ef4444 !important;
+  color: white !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+}
+
+/* Focus states for accessibility */
+.action-btn:focus,
+.user-profile-btn:focus {
+  outline: 2px solid #ff9b00;
+  outline-offset: 2px;
+}
+
+/* Animation for notification badge */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.notification-btn ::ng-deep .mat-badge-content {
+  animation: pulse 2s infinite;
+}
+
+/* Scrollbar for notification list */
+.notification-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}

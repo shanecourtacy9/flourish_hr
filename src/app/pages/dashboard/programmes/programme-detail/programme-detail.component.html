@@ -112,14 +112,91 @@
                     </mat-select>
                 </mat-form-field>
                 <div fxFlex="45%" fxFlex.lt-md="100%" class='button-container' fxFlexAlign="end">
-                    <button *ngIf="!isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase'>
-                        Update
+                    <button *ngIf="!isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase' [disabled]="loading$">
+                        <mat-spinner *ngIf="loading$" diameter="20" class="inline-spinner"></mat-spinner>
+                        <span *ngIf="!loading$">Update</span>
                     </button>
-                    <button *ngIf="isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase'>
-                        Add
+                    <button *ngIf="isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase' [disabled]="loading$">
+                        <mat-spinner *ngIf="loading$" diameter="20" class="inline-spinner"></mat-spinner>
+                        <span *ngIf="!loading$">Add</span>
                     </button>
                 </div>
             </form>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<!-- Registered Users List -->
+<div class='container' fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="60px" fxLayoutAlign='center center' *ngIf='!isAddMode'>
+    <mat-card fxFlex="95%">
+        <div class='card-header'>Registered users</div>
+        <mat-card-content>
+            <div *ngIf="registeredUsersLoading" class="skeleton-loader-item">
+                <ngx-skeleton-loader count="5" [theme]="{ 'border-radius': '0', height: '40px' }"></ngx-skeleton-loader>
+            </div>
+            <div *ngIf="!registeredUsersLoading && registeredUsers.length === 0">
+                No registered users
+            </div>
+            <div *ngIf="!registeredUsersLoading && registeredUsers.length > 0">
+                <table class="mat-elevation-z1" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;padding: 8px 12px">Name</th>
+                            <th style="text-align:left;padding: 8px 12px">Email</th>
+                            <th style="width: 160px;padding: 8px 12px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of registeredUsers">
+                            <td style="padding: 8px 12px">{{user.fullName}}</td>
+                            <td style="padding: 8px 12px">{{user.email}}</td>
+                            <td style="padding: 8px 12px">
+                                <button mat-stroked-button color="warn" (click)="onRemoveRegisteredUser(user)">
+                                    <mat-icon>person_remove</mat-icon>
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<!-- Waitlist Users List -->
+<div class='container' fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="60px" fxLayoutAlign='center center' *ngIf='!isAddMode'>
+    <mat-card fxFlex="95%">
+        <div class='card-header' fxLayout="row" fxLayoutAlign="space-between center">
+            <span>Waitlisted users</span>
+            <button mat-flat-button color="secondary" (click)="onNotifyWaitlist()" [disabled]="waitlistLoading || waitlistUsers.length === 0">
+                <mat-icon>campaign</mat-icon>
+                Notify waitlist
+            </button>
+        </div>
+        <mat-card-content>
+            <div *ngIf="waitlistLoading" class="skeleton-loader-item">
+                <ngx-skeleton-loader count="5" [theme]="{ 'border-radius': '0', height: '40px' }"></ngx-skeleton-loader>
+            </div>
+            <div *ngIf="!waitlistLoading && waitlistUsers.length === 0">
+                No users on the waitlist
+            </div>
+            <div *ngIf="!waitlistLoading && waitlistUsers.length > 0">
+                <table class="mat-elevation-z1" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;padding: 8px 12px">Name</th>
+                            <th style="text-align:left;padding: 8px 12px">Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of waitlistUsers">
+                            <td style="padding: 8px 12px">{{user.fullName}}</td>
+                            <td style="padding: 8px 12px">{{user.email}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </mat-card-content>
     </mat-card>
 </div>

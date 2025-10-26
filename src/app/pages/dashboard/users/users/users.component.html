@@ -1,142 +1,320 @@
-<div class='user-page-container'>
-    <div class="skeleton-loader-item">
-        <ngx-skeleton-loader *ngIf='!initializedLoading' count="8" [theme]="{ 'border-radius': '0', height: '10vh' }">
-        </ngx-skeleton-loader>
-    </div>
-    <div class='indicator-container' fxLayout="row nowrap" fxLayout.lt-md="column" fxLayoutGap="60px"
-        fxLayoutAlign='center center' *ngIf='initializedLoading'>
-        <mat-card fxFlex="35%" fxFlex.lt-md="100%">
-            <div class='card-header'>
-                <mat-icon class="mat-18">directions_run</mat-icon>
-            </div>
-            <mat-card-header>
-                <mat-card-title>Onboarded Users</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <h3>{{onboardedUsers}}</h3>
-            </mat-card-content>
-        </mat-card>
-        <mat-card fxFlex="35%" fxFlex.lt-md="100%">
-            <div class='card-header'>
-                <mat-icon>people_outline</mat-icon>
-            </div>
-            <mat-card-header>
-                <mat-card-title>Total Users</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <h3>{{totalUsers}}</h3>
-            </mat-card-content>
-        </mat-card>
+<div class="modern-users-page">
+  <!-- Loading skeleton -->
+  <div class="skeleton-container" *ngIf="!initializedLoading">
+    <ngx-skeleton-loader
+      count="8"
+      [theme]="{ 'border-radius': '12px', height: '80px', 'margin-bottom': '16px' }"
+    >
+    </ngx-skeleton-loader>
+  </div>
+
+  <!-- Main content -->
+  <div class="users-content" *ngIf="initializedLoading">
+    <!-- Stats Cards -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card modern-card hover-lift">
+          <div class="stat-icon-wrapper onboarded">
+            <mat-icon class="stat-icon">people</mat-icon>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ onboardedUsers }}</h3>
+            <p class="stat-label">Onboarded Users</p>
+            <p class="stat-description">Active users who have logged in</p>
+          </div>
+          <div class="stat-trend positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+12%</span>
+          </div>
+        </div>
+
+        <div class="stat-card modern-card hover-lift">
+          <div class="stat-icon-wrapper total">
+            <mat-icon class="stat-icon">group</mat-icon>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ totalUsers }}</h3>
+            <p class="stat-label">Total Users</p>
+            <p class="stat-description">All registered users</p>
+          </div>
+          <div class="stat-trend neutral">
+            <mat-icon>remove</mat-icon>
+            <span>0%</span>
+          </div>
+        </div>
+
+        <div class="stat-card modern-card hover-lift">
+          <div class="stat-icon-wrapper members">
+            <mat-icon class="stat-icon">card_membership</mat-icon>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ getMemberCount() }}</h3>
+            <p class="stat-label">Active Members</p>
+            <p class="stat-description">Users with valid membership</p>
+          </div>
+          <div class="stat-trend positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+8%</span>
+          </div>
+        </div>
+
+        <div class="stat-card modern-card hover-lift">
+          <div class="stat-icon-wrapper inactive">
+            <mat-icon class="stat-icon">person_off</mat-icon>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ getInactiveCount() }}</h3>
+            <p class="stat-label">Inactive Users</p>
+            <p class="stat-description">Users yet to log in</p>
+          </div>
+          <div class="stat-trend negative">
+            <mat-icon>trending_down</mat-icon>
+            <span>-5%</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class='table-card-container' [ngStyle]="{'opacity':initializedLoading? 1 : 0 }">
-        <mat-card>
-            <div class='table-toolbar' fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign='start center'>
-                <mat-form-field autocomplete="off" appearance="outline" fxFlex="1 1 auto" fxFlexOffset='20px'
-                    fxFlex.lt-md="100%">
-                    <mat-label>Search</mat-label>
-                    <input matInput placeholder='example@gmail.com' #input>
-                </mat-form-field>
-                <span class='span-space'></span>
-                <div class='button-container' fxFlexAlign='center' fxFlexOffset.lt-md='20px' fxFlex.lt-md="100%">
-                    <button mat-flat-button color="primary" class='text-uppercase' (click)='addNewUser()'>
-                        add new
-                    </button>
-                    <button mat-flat-button color="primary" class='text-uppercase' fxFlexOffset='20px'
-                        fxFlexOffset.lt-sm='10px' (click)='gotoBatchUploadUsersPage()'>
-                        batch upload
-                    </button>
-                    <button mat-flat-button color="primary" class='text-uppercase' fxFlexOffset='20px'
-                        fxFlexOffset.lt-sm='10px' (click)='assignMemberships()'>
-                        assign membership
-                    </button>
-                </div>
+    <!-- Users Table Section -->
+    <div class="table-section">
+      <div class="table-card modern-card">
+        <!-- Table Header -->
+        <div class="table-header">
+          <div class="table-title-section">
+            <h2 class="table-title">User Management</h2>
+            <p class="table-subtitle">Manage your organization's users and their access</p>
+          </div>
+          
+          <!-- Search and Actions -->
+          <div class="table-controls">
+            <div class="search-section">
+              <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Search users</mat-label>
+                <input 
+                  matInput 
+                  placeholder="Search by name or email..." 
+                  #input
+                  (keyup)="applyFilter($event)"
+                />
+                <mat-icon matPrefix>search</mat-icon>
+              </mat-form-field>
             </div>
-            <!-- <div class='card-header' *ngIf='!loading$'>
-                users
-            </div> -->
-            <mat-divider></mat-divider>
-            <mat-card-content>
-                <ngx-skeleton-loader *ngIf='loading$' count="4" [theme]="{ 'border-radius': '0', height: '10vh' }">
-                </ngx-skeleton-loader>
-                <table mat-table [dataSource]="users" matSort matSortDisableClear matSortDirection="desc"
-                    *ngIf='!loading$'>
-                    <ng-container matColumnDef="select">
-                        <th mat-header-cell *matHeaderCellDef>
-                            <mat-checkbox (change)="$event ? masterToggle() : null"
-                                [checked]="selection.hasValue() && isAllSelected()"
-                                [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                [aria-label]="checkboxLabel()">
-                            </mat-checkbox>
-                        </th>
-                        <td mat-cell *matCellDef="let row">
-                            <mat-checkbox (click)="$event.stopPropagation()"
-                                (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
-                                [aria-label]="checkboxLabel(row)">
-                            </mat-checkbox>
-                        </td>
-                    </ng-container>
-                    <!-- Index coloum -->
-                    <ng-container matColumnDef="index">
-                        <th mat-header-cell *matHeaderCellDef> Index </th>
-                        <td mat-cell *matCellDef="let i = index;">
-                            {{i + (paginator?.pageIndex * paginator?.pageSize)+1}}
-                        </td>
-                    </ng-container>
-                    <!-- email -->
-                    <ng-container matColumnDef='email'>
-                        <th mat-header-cell *matHeaderCellDef>Email</th>
-                        <td mat-cell *matCellDef='let row' (click)="editUser(row)">
-                            {{row.email}}
-                        </td>
-                    </ng-container>
-                    <!-- full name -->
-                    <ng-container matColumnDef="fullName">
-                        <th mat-header-cell *matHeaderCellDef>
-                            Full name
-                        </th>
-                        <td mat-cell *matCellDef="let row" >
-                            {{row?.fullName}}
-                        </td>
-                    </ng-container>
-                    <!--is active -->
-                    <ng-container matColumnDef="isActive">
-                        <th mat-header-cell *matHeaderCellDef>
-                            Active
-                        </th>
-                        <td mat-cell *matCellDef="let row">
-                            {{row?.isActive? "Yes" : "No"}}
-                        </td>
-                    </ng-container>
-                    <!--expire time -->
-                    <ng-container matColumnDef="memberStatus">
-                        <th mat-header-cell *matHeaderCellDef>
-                            Membership
-                        </th>
-                        <td mat-cell *matCellDef="let row">
-                            {{row?.isMember? "Yes" : "No"}}
-                        </td>
-                    </ng-container>
-                    <!-- Actions -->
-                    <ng-container matColumnDef='actions'>
-                        <th mat-header-cell *matHeaderCellDef>Actions</th>
-                        <td mat-cell *matCellDef='let row;let i = index;'>
-                            <button mat-icon-button mat-stroked-button color='primary' [disabled]="row.isOutdated"
-                            (click)="editUser(row)">
-                                <mat-icon class='white-icon'>create</mat-icon>
-                            </button>&nbsp;|
-                            <button mat-icon-button mat-stroked-button color='primary' [disabled]="row.isOutdated"
-                                (click)='deleteUser(row)'>
-                                <mat-icon class='white-icon'>delete</mat-icon>
-                            </button>
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns:displayedColumns;">
-                    </tr>
-                </table>
-                <mat-paginator [length]='totalUsers' [pageSizeOptions]="[20, 30]"></mat-paginator>
-            </mat-card-content>
-        </mat-card>
+            
+            <div class="action-buttons">
+              <button
+                mat-stroked-button
+                class="action-btn secondary"
+                (click)="assignMemberships()"
+              >
+                <mat-icon>card_membership</mat-icon>
+                Assign Membership
+              </button>
+              
+              <button
+                mat-stroked-button
+                class="action-btn secondary"
+                (click)="gotoBatchUploadUsersPage()"
+              >
+                <mat-icon>upload</mat-icon>
+                Batch Upload
+              </button>
+              
+              <button
+                mat-raised-button
+                color="primary"
+                class="action-btn primary"
+                (click)="addNewUser()"
+              >
+                <mat-icon>person_add</mat-icon>
+                Add New User
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Content -->
+        <div class="table-content">
+          <!-- Loading State -->
+          <div class="table-loading" *ngIf="loading$">
+            <ngx-skeleton-loader
+              count="6"
+              [theme]="{ 'border-radius': '8px', height: '60px', 'margin-bottom': '12px' }"
+            >
+            </ngx-skeleton-loader>
+          </div>
+
+          <!-- Data Table -->
+          <div class="modern-table-wrapper" *ngIf="!loading$">
+            <table
+              mat-table
+              [dataSource]="users"
+              matSort
+              matSortDisableClear
+              matSortDirection="desc"
+              class="modern-table"
+            >
+              <!-- Selection Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef class="select-header">
+                  <mat-checkbox
+                    (change)="$event ? masterToggle() : null"
+                    [checked]="selection.hasValue() && isAllSelected()"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                    [aria-label]="checkboxLabel()"
+                    class="modern-checkbox"
+                  >
+                  </mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let row" class="select-cell">
+                  <mat-checkbox
+                    (click)="$event.stopPropagation()"
+                    (change)="$event ? selection.toggle(row) : null"
+                    [checked]="selection.isSelected(row)"
+                    [aria-label]="checkboxLabel(row)"
+                    class="modern-checkbox"
+                  >
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+
+              <!-- User Profile Column -->
+              <ng-container matColumnDef="profile">
+                <th mat-header-cell *matHeaderCellDef class="profile-header">User</th>
+                <td mat-cell *matCellDef="let row" class="profile-cell" (click)="editUser(row)">
+                  <div class="user-profile">
+                    <div class="user-avatar">
+                      <mat-icon>person</mat-icon>
+                    </div>
+                    <div class="user-details">
+                      <p class="user-name">{{ row?.fullName || 'No Name' }}</p>
+                      <p class="user-email">{{ row.email }}</p>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef class="status-header">Status</th>
+                <td mat-cell *matCellDef="let row" class="status-cell">
+                  <div class="status-badges">
+                    <span class="status-badge" [ngClass]="row?.isActive ? 'active' : 'inactive'">
+                      <mat-icon class="status-icon">{{ row?.isActive ? 'check_circle' : 'cancel' }}</mat-icon>
+                      {{ row?.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Membership Column -->
+              <ng-container matColumnDef="membership">
+                <th mat-header-cell *matHeaderCellDef class="membership-header">Membership</th>
+                <td mat-cell *matCellDef="let row" class="membership-cell">
+                  <span class="membership-badge" [ngClass]="checkIsMember(row) ? 'member' : 'non-member'">
+                    <mat-icon class="membership-icon">{{ checkIsMember(row) ? 'verified' : 'pending' }}</mat-icon>
+                    {{ checkIsMember(row) ? 'Member' : 'Non-Member' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Join Date Column -->
+              <ng-container matColumnDef="joinDate">
+                <th mat-header-cell *matHeaderCellDef class="date-header">Joined</th>
+                <td mat-cell *matCellDef="let row" class="date-cell">
+                  <div class="date-info">
+                    <span class="date-text">{{ formatDate(row?.createdAt) }}</span>
+                    <span class="date-relative">{{ getRelativeTime(row?.createdAt) }}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+                <td mat-cell *matCellDef="let row; let i = index" class="actions-cell">
+                  <div class="action-buttons-group">
+                    <button
+                      mat-icon-button
+                      class="action-button edit"
+                      [disabled]="row.isOutdated"
+                      (click)="editUser(row); $event.stopPropagation()"
+                      matTooltip="Edit user"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    
+                    <button
+                      mat-icon-button
+                      class="action-button delete"
+                      [disabled]="row.isOutdated"
+                      (click)="deleteUser(row); $event.stopPropagation()"
+                      matTooltip="Delete user"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                    
+                    <button
+                      mat-icon-button
+                      class="action-button more"
+                      [matMenuTriggerFor]="userMenu"
+                      (click)="$event.stopPropagation()"
+                      matTooltip="More options"
+                    >
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    
+                    <mat-menu #userMenu="matMenu">
+                      <button mat-menu-item (click)="viewUserDetails(row)">
+                        <mat-icon>visibility</mat-icon>
+                        View Details
+                      </button>
+                      <button mat-menu-item (click)="resetUserPassword(row)">
+                        <mat-icon>lock_reset</mat-icon>
+                        Reset Password
+                      </button>
+                      <button mat-menu-item (click)="toggleUserStatus(row)">
+                        <mat-icon>{{ row?.isActive ? 'block' : 'check' }}</mat-icon>
+                        {{ row?.isActive ? 'Deactivate' : 'Activate' }}
+                      </button>
+                    </mat-menu>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Table Rows -->
+              <tr mat-header-row *matHeaderRowDef="displayedColumns" class="modern-header-row"></tr>
+              <tr 
+                mat-row 
+                *matRowDef="let row; columns: displayedColumns" 
+                class="modern-row"
+                [class.selected]="selection.isSelected(row)"
+              ></tr>
+            </table>
+
+            <!-- Empty State -->
+            <div class="empty-state" *ngIf="users?.length === 0">
+              <mat-icon class="empty-icon">people_outline</mat-icon>
+              <h3 class="empty-title">No users found</h3>
+              <p class="empty-description">Get started by adding your first user to the system.</p>
+              <button mat-raised-button color="primary" (click)="addNewUser()">
+                <mat-icon>person_add</mat-icon>
+                Add First User
+              </button>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="table-footer">
+            <mat-paginator
+              [length]="totalUsers"
+              [pageSizeOptions]="[10, 20, 50]"
+              [pageSize]="20"
+              class="modern-paginator"
+              showFirstLastButtons
+            ></mat-paginator>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

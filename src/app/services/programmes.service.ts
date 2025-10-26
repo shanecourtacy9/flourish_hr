@@ -169,4 +169,48 @@ export class ProgrammesService {
       })
     )
   }
+
+  /**
+   * get waitlisted users for a programme
+   * @param id
+   * @returns
+   */
+  getWaitlistUsersByProgrammeId(id) {
+    return this.http.get(`${URL}/scheduledProgrammes/${id}/waitlist`).pipe(
+      map(res => res['waitlistUsers'] ?? res['waitlist'] ?? []),
+      catchError(err => {
+        throw err
+      })
+    )
+  }
+
+  /**
+   * notify all waitlisted users for a programme
+   */
+  notifyWaitlist(programmeId: string, payload: { subject?: string; message: string }) {
+    this.loadingSubject.next(true)
+    return this.http
+      .post(`${URL}/scheduledProgrammes/${programmeId}/notifyWaitlist`, payload)
+      .pipe(
+        mapTo(true),
+        finalize(() => {
+          this.loadingSubject.next(false)
+        })
+      )
+  }
+
+  /**
+   * remove a registered user from a programme
+   */
+  removeRegisteredUserFromProgramme(programmeId: string, userId: string) {
+    this.loadingSubject.next(true)
+    return this.http
+      .delete(`${URL}/scheduledProgrammes/${programmeId}/registeredUsers/${userId}`)
+      .pipe(
+        mapTo(true),
+        finalize(() => {
+          this.loadingSubject.next(false)
+        })
+      )
+  }
 }

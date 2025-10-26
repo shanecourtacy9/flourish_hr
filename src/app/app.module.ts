@@ -1,26 +1,28 @@
-
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, ErrorHandler } from '@angular/core';
-import { LocationStrategy, HashLocationStrategy, PathLocationStrategy } from '@angular/common';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule, ErrorHandler } from "@angular/core";
+import {
+  LocationStrategy,
+  HashLocationStrategy,
+  PathLocationStrategy,
+} from "@angular/common";
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { MaterialsModule } from './materials/materials.module';
+import { MaterialsModule } from "./materials/materials.module";
 import { JwtModule } from "@auth0/angular-jwt";
-import { HttpRequestInterceptor } from './error/http-loading.interceptor';
-import { GlobalErrorHandler } from './error/global-error-handler';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { TouchedErrorStateMatcher } from './error/touched-error-state.matcher';
+import { HttpRequestInterceptor } from "./error/http-loading.interceptor";
+import { GlobalErrorHandler } from "./error/global-error-handler";
+import { ErrorStateMatcher } from "@angular/material/core";
+import { TouchedErrorStateMatcher } from "./error/touched-error-state.matcher";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -33,17 +35,21 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        whitelistedDomains: ['192.168.0.118:3000', '192.168.1.123:3000', '34.87.94.22']
-      }
-    })
+      },
+    }),
+    NgbModule,
   ],
   providers: [
     // { provide: LocationStrategy, useClass: HashLocationStrategy },
-    { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpRequestInterceptor,
+      multi: true,
+    },
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     { provide: ErrorStateMatcher, useClass: TouchedErrorStateMatcher },
-    { provide: LocationStrategy, useClass: PathLocationStrategy }
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
