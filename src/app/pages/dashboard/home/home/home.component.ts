@@ -473,16 +473,16 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   fetchChallengeKPIs() {
     if (!this.company || !this.company["_id"]) return;
-    this.kpiService
-      .getCompanyChallengeStats({
-        startDate: this.startDate,
-        endDate: this.endDate,
-        company: this.company["_id"],
-        granularity: this.granularity,
-      })
-      .subscribe((stats) => {
-        this.challengeStats = stats;
-      });
+    // this.kpiService
+    //   .getCompanyChallengeStats({
+    //     startDate: this.startDate,
+    //     endDate: this.endDate,
+    //     company: this.company["_id"],
+    //     granularity: this.granularity,
+    //   })
+    //   .subscribe((stats) => {
+    //     this.challengeStats = stats;
+    //   });
   }
 
   onGranularityChange() {
