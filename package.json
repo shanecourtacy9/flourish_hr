@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "NODE_OPTIONS=--openssl-legacy-provider ng serve",
     "build": "NODE_OPTIONS=--openssl-legacy-provider ng build",
+    "build:prod": "NODE_OPTIONS=--openssl-legacy-provider ng build --configuration production",
     "test": "NODE_OPTIONS=--openssl-legacy-provider ng test",
     "lint": "ng lint",
     "e2e": "NODE_OPTIONS=--openssl-legacy-provider ng e2e"
