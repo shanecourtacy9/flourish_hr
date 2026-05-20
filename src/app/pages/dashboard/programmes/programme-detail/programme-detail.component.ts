@@ -44,6 +44,10 @@ export class ProgrammeDetailComponent implements OnInit {
     { value: true, name: "Online" },
     { value: false, name: "Offline" },
   ];
+  registrationConditions = [
+    { value: true, name: "Registration Required" },
+    { value: false, name: "No Registration" },
+  ];
   commonFields = [
     "name",
     "capacity",
@@ -55,6 +59,7 @@ export class ProgrammeDetailComponent implements OnInit {
     "isOnline",
     "password",
     "venueOrLink",
+    "registrationRequired",
   ];
   constructor(
     private router: Router,
@@ -241,6 +246,7 @@ export class ProgrammeDetailComponent implements OnInit {
         isOnline: [true, Validators.required],
         password: [""],
         venueOrLink: ["", Validators.required],
+        registrationRequired: [true, Validators.required],
       },
       {
         validator: DateValidator("startTime", "endTime"),

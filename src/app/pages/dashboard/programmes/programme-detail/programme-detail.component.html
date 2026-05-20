@@ -111,6 +111,14 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+                <mat-form-field fxFlex="45%" fxFlex.lt-md="100%" appearance="outline">
+                    <mat-label>Registration Requirement</mat-label>
+                    <mat-select formControlName='registrationRequired' required>
+                        <mat-option *ngFor="let regCondition of registrationConditions" [value]="regCondition.value">
+                            {{regCondition.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
                 <div fxFlex="45%" fxFlex.lt-md="100%" class='button-container' fxFlexAlign="end">
                     <button *ngIf="!isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase' [disabled]="loading$">
                         <mat-spinner *ngIf="loading$" diameter="20" class="inline-spinner"></mat-spinner>
