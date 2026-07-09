@@ -187,7 +187,7 @@
                     </div>
                     <div class="user-details">
                       <p class="user-name">{{ row?.fullName || 'No Name' }}</p>
-                      <p class="user-email">{{ row.email }}</p>
+                      <p class="user-email">{{ row.email || row.phoneNumber || 'No contact details' }}</p>
                     </div>
                   </div>
                 </td>

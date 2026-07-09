@@ -88,7 +88,7 @@ export class UserDetailComponent implements OnInit {
       email: ["", [Validators.required, Validators.email]],
       firstName: ["", Validators.required],
       lastName: ["", Validators.required],
-      gender: ["Male", Validators.required],
+      gender: ["male", Validators.required],
       phoneNumber: ["", Validators.maxLength(20)],
       dateOfBirth: [new Date(this.maxDate).toISOString(), Validators.required],
       isMember: ["Yes", Validators.required],

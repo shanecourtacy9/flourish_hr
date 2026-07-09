@@ -1,12 +1,10 @@
 import { SelectionModel } from "@angular/cdk/collections";
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { AfterViewChecked, Component, OnInit, ViewChild } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort } from "@angular/material/sort";
 import { NavigationExtras, Router } from "@angular/router";
-import { fromEvent } from "rxjs";
-import { debounceTime, distinctUntilChanged, tap } from "rxjs/operators";
 import { UsersDatasource } from "src/app/models";
 import {
   ConfirmDialogComponent,
@@ -19,10 +17,9 @@ import { UsersService } from "src/app/services";
   templateUrl: "./users.component.html",
   styleUrls: ["./users.component.scss"],
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, AfterViewChecked {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild("input", { static: true }) input: ElementRef;
   usersDatasource: UsersDatasource;
   selection = new SelectionModel<any>(true, []);
   onboardedUsers = 0;
@@ -38,6 +35,8 @@ export class UsersComponent implements OnInit {
   users = [];
   totalUsers = 0;
   loading$ = true;
+  private currentFilter = "";
+  private paginatorInitialized = false;
   constructor(
     private usersService: UsersService,
     public dialog: MatDialog,
@@ -71,32 +70,13 @@ export class UsersComponent implements OnInit {
         console.log(users);
       });
   }
-  /**
-   * event
-   */
-  ngAfterViewInit(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
-    fromEvent(this.input.nativeElement, "keyup")
-      .pipe(
-        debounceTime(1000),
-        distinctUntilChanged(),
-        tap(() => {
-          this.paginator.pageIndex = 0;
-        })
-      )
-      .subscribe(() => {
-        this.getUsers(
-          this.input.nativeElement.value,
-          this.sort.direction,
-          this.paginator.pageIndex,
-          this.paginator.pageSize
-        );
-      });
+  ngAfterViewChecked(): void {
+    if (!this.paginator || this.paginatorInitialized) return;
+    this.paginatorInitialized = true;
     this.paginator.page.subscribe(() => {
       this.getUsers(
-        this.input.nativeElement.value,
-        this.sort.direction,
+        this.currentFilter,
+        this.sort?.direction || "desc",
         this.paginator.pageIndex,
         this.paginator.pageSize
       );
@@ -139,12 +119,7 @@ export class UsersComponent implements OnInit {
       this.usersService.assignMemberships(users).subscribe((res) => {
         if (res) {
           this.selection.clear();
-          this.getUsers(
-            this.input.nativeElement.value,
-            "desc",
-            this.paginator.pageIndex,
-            this.paginator.pageSize
-          );
+          this.reloadUsers();
         }
       });
     } else {
@@ -201,12 +176,7 @@ export class UsersComponent implements OnInit {
           .subscribe((res) => {
             if (res) {
               this.snackBar.open("deleted", "", { duration: 2000 });
-              this.getUsers(
-                this.input.nativeElement.value,
-                "desc",
-                this.paginator.pageIndex,
-                this.paginator.pageSize
-              );
+              this.reloadUsers();
             }
           });
       }
@@ -257,8 +227,18 @@ export class UsersComponent implements OnInit {
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
-    // Implementation for filtering - you can integrate with your existing filter logic
+    this.currentFilter = filterValue;
+    if (this.paginator) this.paginator.pageIndex = 0;
     this.getUsers(filterValue, "desc", 0, this.paginator?.pageSize || 20);
+  }
+
+  private reloadUsers(): void {
+    this.getUsers(
+      this.currentFilter,
+      "desc",
+      this.paginator?.pageIndex || 0,
+      this.paginator?.pageSize || 20
+    );
   }
 
   viewUserDetails(user: any): void {

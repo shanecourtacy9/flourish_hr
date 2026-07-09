@@ -12,7 +12,13 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  margin-left: 280px; /* Account for sidebar width */
+  /*
+   * mat-sidenav-content is already offset by Angular Material when the
+   * sidenav is open. Adding a second offset here moved the navbar one
+   * sidebar-width too far to the right, leaving the title clipped.
+   */
+  margin-left: 0;
+  min-width: 0;
   transition: all 0.3s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
@@ -370,13 +376,12 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .modern-navbar {
-    margin-left: 260px;
+    margin-left: 0;
   }
 }
 
 @media (max-width: 768px) {
   .modern-navbar {
-    margin-left: 0;
     padding: 0 16px;
   }
 

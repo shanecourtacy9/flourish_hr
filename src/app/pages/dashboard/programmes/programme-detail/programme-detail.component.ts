@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ProgrammesService, NotificationService } from "src/app/services";
+import { ProgrammesService, NotificationService, UsersService } from "src/app/services";
 import { DateValidator, DirtyValues, ValueAssigner } from "src/app/_helpers";
 import { parse as dateParse, format, parseISO, subYears, isEqual } from "date-fns";
 import { ExcelService } from "src/app/services/excel.service";
@@ -12,6 +12,7 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogModel,
 } from "src/app/pages/shared/confirm-dialog/confirm-dialog.component";
+import { environment } from 'src/environments/environment';
 @Component({
   selector: "app-programme-detail",
   templateUrl: "./programme-detail.component.html",
@@ -36,6 +37,9 @@ export class ProgrammeDetailComponent implements OnInit {
   registeredUsersLoading = false;
   waitlistUsers: any[] = [];
   waitlistLoading = false;
+  attendanceUserEmail = '';
+  attendanceUserLoading = false;
+  attendanceUpdatingUserIds = new Set<string>();
   freeConditions = [
     { value: true, name: "All" },
     { value: false, name: "Paid" },
@@ -43,6 +47,10 @@ export class ProgrammeDetailComponent implements OnInit {
   onlineConditions = [
     { value: true, name: "Online" },
     { value: false, name: "Offline" },
+  ];
+  registrationConditions = [
+    { value: true, name: "Registration Required" },
+    { value: false, name: "No Registration" },
   ];
   commonFields = [
     "name",
@@ -55,6 +63,7 @@ export class ProgrammeDetailComponent implements OnInit {
     "isOnline",
     "password",
     "venueOrLink",
+    "registrationRequired",
   ];
   constructor(
     private router: Router,
@@ -65,7 +74,8 @@ export class ProgrammeDetailComponent implements OnInit {
     private excelService: ExcelService,
     private formResponseService: FormResponseService,
     private notificationService: NotificationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private usersService: UsersService
   ) {
     // Set the minimum  and maxnimum  years
     if (this.router.getCurrentNavigation().extras.state) {
@@ -120,7 +130,7 @@ export class ProgrammeDetailComponent implements OnInit {
     if (!this.currentProgramme?._id) return;
     this.registeredUsersLoading = true;
     this.programmeService
-      .getRegisteredUsersByProgrammeId(this.currentProgramme._id)
+      .getAttendanceUsersByProgrammeId(this.currentProgramme._id)
       .subscribe({
         next: (users) => {
           this.registeredUsers = users || [];
@@ -130,6 +140,72 @@ export class ProgrammeDetailComponent implements OnInit {
           this.registeredUsersLoading = false;
         },
       });
+  }
+
+  isAttendanceClosed() {
+    return !this.currentProgramme || !this.currentProgramme.endDate || new Date(this.currentProgramme.endDate) < new Date();
+  }
+
+  getProgrammeStatus() {
+    if (!this.currentProgramme) return '';
+    const now = new Date();
+    if (new Date(this.currentProgramme.endDate) < now) return 'Ended';
+    if (new Date(this.currentProgramme.startDate) <= now) return 'In progress';
+    return 'Upcoming';
+  }
+
+  getProgrammeStatusClass() {
+    const status = this.getProgrammeStatus();
+    if (status === 'Ended') return 'ended';
+    if (status === 'In progress') return 'in-progress';
+    return 'upcoming';
+  }
+
+  getAttendanceUrl() {
+    const programmeId = encodeURIComponent(String(this.currentProgramme && this.currentProgramme._id || ''));
+    const eventName = encodeURIComponent(this.currentProgramme && this.currentProgramme.name || '');
+    return `${environment.attendanceUrl}?id=${programmeId}&event=${eventName}`;
+  }
+
+  markAttendance(user: any) {
+    if (!user || this.attendanceUpdatingUserIds.has(user._id)) return;
+    this.attendanceUpdatingUserIds.add(user._id);
+    this.programmeService.markAttendance(this.currentProgramme._id, user._id).subscribe({
+      next: () => {
+        this.snackBar.open(`${user.fullName || user.email} marked as attended`, '', { duration: 2500 });
+        this.attendanceUpdatingUserIds.delete(user._id);
+        this.loadRegisteredUsers();
+      },
+      error: (error) => {
+        this.attendanceUpdatingUserIds.delete(user._id);
+        this.snackBar.open(error.error && error.error.message || 'Unable to mark attendance', '', { duration: 3500 });
+      }
+    });
+  }
+
+  markUnregisteredCompanyUser() {
+    const email = this.attendanceUserEmail.trim();
+    if (!email) {
+      this.snackBar.open('Enter a company user email address', '', { duration: 2500 });
+      return;
+    }
+    this.attendanceUserLoading = true;
+    this.usersService.getUsers(email, 'asc', 0, 10).subscribe({
+      next: (users) => {
+        const user = (users || []).find((candidate) => candidate.email && candidate.email.toLowerCase() === email.toLowerCase());
+        this.attendanceUserLoading = false;
+        if (!user) {
+          this.snackBar.open('No user in this company has that email address', '', { duration: 3000 });
+          return;
+        }
+        this.attendanceUserEmail = '';
+        this.markAttendance(user);
+      },
+      error: () => {
+        this.attendanceUserLoading = false;
+        this.snackBar.open('Unable to look up company users', '', { duration: 3000 });
+      }
+    });
   }
 
   /**
@@ -241,6 +317,7 @@ export class ProgrammeDetailComponent implements OnInit {
         isOnline: [true, Validators.required],
         password: [""],
         venueOrLink: ["", Validators.required],
+        registrationRequired: [true, Validators.required],
       },
       {
         validator: DateValidator("startTime", "endTime"),

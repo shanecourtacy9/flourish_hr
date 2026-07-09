@@ -1,202 +1,331 @@
-<mat-toolbar fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign='start center'>
-    <button  mat-icon-button color="primary" (click)='goBack()'>
-        <mat-icon class="mat-18">arrow_back</mat-icon>
-    </button>
-    <span class='span-space'></span>
-    <button [disabled]='loading$' mat-flat-button color="primary"  fxFlexOffset='20px' *ngIf='!isAddMode'
-        fxFlexOffset.lt-sm='10px' (click)='exportRegisteredUsers()'>
-        Download registration list
-    </button>
-    <button [disabled]='loading$' mat-flat-button color="primary"  fxFlexOffset='20px' *ngIf='!isAddMode'
-        fxFlexOffset.lt-sm='10px' (click)='exportFeedback()'>
-        Download feedback report
-    </button>
-</mat-toolbar>
+<div class="modern-detail-page">
+  <!-- Page Header -->
+  <div class="detail-header">
+    <div class="header-main">
+      <button mat-icon-button class="back-button" (click)="goBack()" matTooltip="Back to programmes" aria-label="Back to programmes">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-titles">
+        <h1 class="page-title">{{ isAddMode ? 'New Programme' : (currentProgramme?.name || 'Programme Details') }}</h1>
+        <p class="page-subtitle" *ngIf="isAddMode">Set up a new wellness programme for your organisation</p>
+        <div class="header-meta" *ngIf="!isAddMode && currentProgramme">
+          <span class="meta-chip">
+            <mat-icon>event</mat-icon>
+            {{ currentProgramme.startDate | date:'EEE, d MMM y' }}
+          </span>
+          <span class="meta-chip">
+            <mat-icon>schedule</mat-icon>
+            {{ currentProgramme.startDate | date:'shortTime' }} – {{ currentProgramme.endDate | date:'shortTime' }}
+          </span>
+          <span class="meta-chip" *ngIf="!registeredUsersLoading">
+            <mat-icon>group</mat-icon>
+            {{ registeredUsers.length }} / {{ currentProgramme.capacity }} registered
+          </span>
+          <span class="status-badge" [ngClass]="getProgrammeStatusClass()">{{ getProgrammeStatus() }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-actions" *ngIf="!isAddMode">
+      <button mat-stroked-button class="header-btn" [disabled]="loading$" (click)="exportRegisteredUsers()">
+        <mat-icon>download</mat-icon>
+        Registration list
+      </button>
+      <button mat-stroked-button class="header-btn" [disabled]="loading$" (click)="exportFeedback()">
+        <mat-icon>rate_review</mat-icon>
+        Feedback report
+      </button>
+      <a mat-flat-button color="primary" class="header-btn qr-btn" [href]="getAttendanceUrl()" target="_blank" rel="noopener noreferrer">
+        <mat-icon>qr_code_2</mat-icon>
+        Attendance QR
+      </a>
+    </div>
+  </div>
 
-<div class="skeleton-loader-item" *ngIf='loading$'>
-    <ngx-skeleton-loader count="10" [theme]="{ 'border-radius': '0', height: '50px' }">
+  <!-- Loading skeleton -->
+  <div class="skeleton-container" *ngIf="loading$">
+    <ngx-skeleton-loader count="6" [theme]="{ 'border-radius': '12px', height: '56px', 'margin-bottom': '12px' }">
     </ngx-skeleton-loader>
-</div>
-<div class='container' fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="60px" fxLayoutAlign='center center'>
-    <!-- <div class='spinner-container' *ngIf='loading$'>
-        <mat-spinner color='accent'></mat-spinner>
-      </div> -->
-    <mat-card fxFlex="95%" *ngIf='!loading$'>
-        <div class='card-header'>
-            {{managementMode}}
+  </div>
+
+  <!-- Programme form -->
+  <div class="detail-card form-card" *ngIf="!loading$">
+    <form autocomplete="off" [formGroup]="programmeForm" (ngSubmit)="updateProgramme()">
+      <!-- Basic information -->
+      <section class="form-section">
+        <div class="section-header">
+          <div class="section-icon"><mat-icon>info_outline</mat-icon></div>
+          <div class="section-titles">
+            <h2 class="section-title">Basic information</h2>
+            <p class="section-hint">Name, category and write-up shown to employees</p>
+          </div>
         </div>
-        <mat-card-content>
-            <form class='form-container' autocomplete="off" fxLayout="row wrap" fxLayoutGap="30px"
-                fxLayoutAlign="start  center" [formGroup]='programmeForm' (ngSubmit)='updateProgramme()'>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Programme Name</mat-label>
-                    <input formControlName="name" matInput required />
-                    <mat-error *ngIf="f.name.errors?.required">Name is required</mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" [min]="minDate" [matDatepicker]="picker" required>
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Start Time</mat-label>
-                    <input matInput formControlName="startTime" [ngxTimepicker]="startPicker" required>
-                    <ngx-material-timepicker #startPicker></ngx-material-timepicker>
-                    <mat-error *ngIf="f.startTime.errors?.required">start time is required</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>End Time</mat-label>
-                    <input matInput formControlName="endTime" [ngxTimepicker]="endPicker" required>
-                    <ngx-material-timepicker #endPicker></ngx-material-timepicker>
-                    <mat-error *ngIf="f.endTime.errors?.required">end time is required</mat-error>
-                    <mat-error *ngIf="f.endTime.errors?.BiggerMatch">end time must bigger than start time</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Programme Category</mat-label>
-                    <mat-select formControlName='category' required>
-                        <mat-option *ngFor="let category of programmeCategories" [value]="category._id">
-                            {{category.name}}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="f.category.errors?.required">category is required</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Capacity</mat-label>
-                    <input formControlName="capacity" matInput type='number' required />
-                    <mat-error *ngIf="f.capacity.errors?.required">participant slots is required</mat-error>
-                    <mat-error *ngIf="f.capacity.errors?.min">At least 1 person</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Write Up</mat-label>
-                    <textarea formControlName="description" matInput></textarea>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Trainer Name</mat-label>
-                    <input formControlName="trainer" matInput>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Person in Charge</mat-label>
-                    <input formControlName="personInCharge" matInput>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Contact Number</mat-label>
-                    <input formControlName="contactNumber" matInput />
-                    <mat-error *ngIf="f.contactNumber.errors?.pattern">contact number is 8 numbers</mat-error>
-                </mat-form-field>
-                <mat-form-field fxFlex="45%" appearance="outline" fxFlex.lt-md="100%">
-                    <mat-label>Programme type(Online/ Offline)</mat-label>
-                    <mat-select formControlName='isOnline' required>
-                        <mat-option *ngFor="let onlineCondition of onlineConditions" [value]="onlineCondition.value">
-                            {{onlineCondition.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Zoom Link/Venue and room details</mat-label>
-                    <textarea formControlName="venueOrLink" matInput placeholder="Venue Or Online Link"
-                        required></textarea>
-                    <mat-error *ngIf="f.venueOrLink.errors?.required">Venue Or Online Link is required</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Password (For online programme, this is optional)</mat-label>
-                    <input formControlName="password" matInput />
-                </mat-form-field>
-                <mat-form-field fxFlex="45%" fxFlex.lt-md="100%" appearance="outline">
-                    <mat-label>Access</mat-label>
-                    <mat-select formControlName='isFree' required>
-                        <mat-option *ngFor="let freeCondition of freeConditions" [value]="freeCondition.value">
-                            {{freeCondition.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <div fxFlex="45%" fxFlex.lt-md="100%" class='button-container' fxFlexAlign="end">
-                    <button *ngIf="!isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase' [disabled]="loading$">
-                        <mat-spinner *ngIf="loading$" diameter="20" class="inline-spinner"></mat-spinner>
-                        <span *ngIf="!loading$">Update</span>
-                    </button>
-                    <button *ngIf="isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase' [disabled]="loading$">
-                        <mat-spinner *ngIf="loading$" diameter="20" class="inline-spinner"></mat-spinner>
-                        <span *ngIf="!loading$">Add</span>
-                    </button>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
-</div>
-
-<!-- Registered Users List -->
-<div class='container' fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="60px" fxLayoutAlign='center center' *ngIf='!isAddMode'>
-    <mat-card fxFlex="95%">
-        <div class='card-header'>Registered users</div>
-        <mat-card-content>
-            <div *ngIf="registeredUsersLoading" class="skeleton-loader-item">
-                <ngx-skeleton-loader count="5" [theme]="{ 'border-radius': '0', height: '40px' }"></ngx-skeleton-loader>
-            </div>
-            <div *ngIf="!registeredUsersLoading && registeredUsers.length === 0">
-                No registered users
-            </div>
-            <div *ngIf="!registeredUsersLoading && registeredUsers.length > 0">
-                <table class="mat-elevation-z1" style="width: 100%">
-                    <thead>
-                        <tr>
-                            <th style="text-align:left;padding: 8px 12px">Name</th>
-                            <th style="text-align:left;padding: 8px 12px">Email</th>
-                            <th style="width: 160px;padding: 8px 12px">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let user of registeredUsers">
-                            <td style="padding: 8px 12px">{{user.fullName}}</td>
-                            <td style="padding: 8px 12px">{{user.email}}</td>
-                            <td style="padding: 8px 12px">
-                                <button mat-stroked-button color="warn" (click)="onRemoveRegisteredUser(user)">
-                                    <mat-icon>person_remove</mat-icon>
-                                    Remove
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </mat-card-content>
-    </mat-card>
-</div>
-
-<!-- Waitlist Users List -->
-<div class='container' fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="60px" fxLayoutAlign='center center' *ngIf='!isAddMode'>
-    <mat-card fxFlex="95%">
-        <div class='card-header' fxLayout="row" fxLayoutAlign="space-between center">
-            <span>Waitlisted users</span>
-            <button mat-flat-button color="secondary" (click)="onNotifyWaitlist()" [disabled]="waitlistLoading || waitlistUsers.length === 0">
-                <mat-icon>campaign</mat-icon>
-                Notify waitlist
-            </button>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Programme Name</mat-label>
+            <input formControlName="name" matInput required />
+            <mat-error *ngIf="f.name.errors?.required">Name is required</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Programme Category</mat-label>
+            <mat-select formControlName='category' required>
+              <mat-option *ngFor="let category of programmeCategories" [value]="category._id">
+                {{category.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="f.category.errors?.required">Category is required</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="span-2">
+            <mat-label>Write Up</mat-label>
+            <textarea formControlName="description" matInput rows="3"></textarea>
+          </mat-form-field>
         </div>
-        <mat-card-content>
-            <div *ngIf="waitlistLoading" class="skeleton-loader-item">
-                <ngx-skeleton-loader count="5" [theme]="{ 'border-radius': '0', height: '40px' }"></ngx-skeleton-loader>
-            </div>
-            <div *ngIf="!waitlistLoading && waitlistUsers.length === 0">
-                No users on the waitlist
-            </div>
-            <div *ngIf="!waitlistLoading && waitlistUsers.length > 0">
-                <table class="mat-elevation-z1" style="width: 100%">
-                    <thead>
-                        <tr>
-                            <th style="text-align:left;padding: 8px 12px">Name</th>
-                            <th style="text-align:left;padding: 8px 12px">Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let user of waitlistUsers">
-                            <td style="padding: 8px 12px">{{user.fullName}}</td>
-                            <td style="padding: 8px 12px">{{user.email}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </mat-card-content>
-    </mat-card>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- Date & time -->
+      <section class="form-section">
+        <div class="section-header">
+          <div class="section-icon"><mat-icon>event</mat-icon></div>
+          <div class="section-titles">
+            <h2 class="section-title">Date &amp; time</h2>
+            <p class="section-hint">Registered users are notified when the schedule changes</p>
+          </div>
+        </div>
+        <div class="form-grid cols-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Date</mat-label>
+            <input matInput formControlName="date" [min]="minDate" [matDatepicker]="picker" required>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Start Time</mat-label>
+            <input matInput formControlName="startTime" [ngxTimepicker]="startPicker" required>
+            <ngx-material-timepicker #startPicker></ngx-material-timepicker>
+            <mat-error *ngIf="f.startTime.errors?.required">Start time is required</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>End Time</mat-label>
+            <input matInput formControlName="endTime" [ngxTimepicker]="endPicker" required>
+            <ngx-material-timepicker #endPicker></ngx-material-timepicker>
+            <mat-error *ngIf="f.endTime.errors?.required">End time is required</mat-error>
+            <mat-error *ngIf="f.endTime.errors?.BiggerMatch">End time must be after the start time</mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- Location & access -->
+      <section class="form-section">
+        <div class="section-header">
+          <div class="section-icon"><mat-icon>place</mat-icon></div>
+          <div class="section-titles">
+            <h2 class="section-title">Location &amp; access</h2>
+            <p class="section-hint">Where the programme happens and who can join</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Programme Type</mat-label>
+            <mat-select formControlName='isOnline' required>
+              <mat-option *ngFor="let onlineCondition of onlineConditions" [value]="onlineCondition.value">
+                {{onlineCondition.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Zoom Link / Venue and room details</mat-label>
+            <textarea formControlName="venueOrLink" matInput rows="1" placeholder="Venue Or Online Link" required></textarea>
+            <mat-error *ngIf="f.venueOrLink.errors?.required">Venue or online link is required</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input formControlName="password" matInput />
+            <mat-hint>Optional, for online programmes</mat-hint>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Access</mat-label>
+            <mat-select formControlName='isFree' required>
+              <mat-option *ngFor="let freeCondition of freeConditions" [value]="freeCondition.value">
+                {{freeCondition.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Registration Requirement</mat-label>
+            <mat-select formControlName='registrationRequired' required>
+              <mat-option *ngFor="let regCondition of registrationConditions" [value]="regCondition.value">
+                {{regCondition.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Capacity</mat-label>
+            <input formControlName="capacity" matInput type='number' required />
+            <mat-hint>Maximum number of participants</mat-hint>
+            <mat-error *ngIf="f.capacity.errors?.required">Participant slots is required</mat-error>
+            <mat-error *ngIf="f.capacity.errors?.min">At least 1 person</mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- Contacts -->
+      <section class="form-section">
+        <div class="section-header">
+          <div class="section-icon"><mat-icon>contact_phone</mat-icon></div>
+          <div class="section-titles">
+            <h2 class="section-title">Contacts</h2>
+            <p class="section-hint">Who runs this programme and how to reach them</p>
+          </div>
+        </div>
+        <div class="form-grid cols-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Trainer Name</mat-label>
+            <input formControlName="trainer" matInput>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Person in Charge</mat-label>
+            <input formControlName="personInCharge" matInput>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Contact Number</mat-label>
+            <input formControlName="contactNumber" matInput />
+            <mat-error *ngIf="f.contactNumber.errors?.pattern">Enter a valid contact number (7–15 digits)</mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <div class="form-footer">
+        <button mat-flat-button color="primary" type="submit" class="submit-btn" [disabled]="loading$">
+          <mat-spinner *ngIf="loading$" diameter="20" class="inline-spinner"></mat-spinner>
+          <span *ngIf="!loading$">{{ isAddMode ? 'Create Programme' : 'Save Changes' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Registered Users -->
+  <div class="detail-card" *ngIf="!isAddMode">
+    <div class="card-header-row">
+      <div class="card-title-group">
+        <div class="card-icon"><mat-icon>how_to_reg</mat-icon></div>
+        <h2 class="card-title">Registered users</h2>
+        <span class="count-chip" *ngIf="!registeredUsersLoading">{{ registeredUsers.length }}</span>
+      </div>
+    </div>
+
+    <!-- Walk-in attendance (only when registration is not required) -->
+    <div class="walk-in-panel" *ngIf="currentProgramme?.registrationRequired === false">
+      <p class="walk-in-text">
+        <mat-icon>person_add</mat-icon>
+        This programme doesn't require registration. Add a company user by email to mark them attended.
+      </p>
+      <div class="walk-in-controls">
+        <mat-form-field appearance="outline" class="walk-in-field">
+          <mat-label>Company user email</mat-label>
+          <input matInput type="email" [(ngModel)]="attendanceUserEmail" [ngModelOptions]="{standalone: true}"
+            [disabled]="attendanceUserLoading || isAttendanceClosed()">
+        </mat-form-field>
+        <button mat-flat-button color="primary" class="walk-in-btn"
+          [disabled]="attendanceUserLoading || isAttendanceClosed()" (click)="markUnregisteredCompanyUser()">
+          {{ attendanceUserLoading ? 'Finding user…' : 'Add & mark attended' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="skeleton-container" *ngIf="registeredUsersLoading">
+      <ngx-skeleton-loader count="4" [theme]="{ 'border-radius': '8px', height: '44px', 'margin-bottom': '8px' }">
+      </ngx-skeleton-loader>
+    </div>
+
+    <div class="empty-state" *ngIf="!registeredUsersLoading && registeredUsers.length === 0">
+      <mat-icon class="empty-icon">people_outline</mat-icon>
+      <p class="empty-text">No registered users yet</p>
+    </div>
+
+    <div class="table-wrapper" *ngIf="!registeredUsersLoading && registeredUsers.length > 0">
+      <table class="detail-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Attendance</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of registeredUsers">
+            <td class="name-cell">{{user.fullName}}</td>
+            <td class="email-cell">{{user.email}}</td>
+            <td>
+              <span class="status-badge" [ngClass]="user.attended ? 'attended' : 'pending'">
+                <mat-icon class="status-icon">{{ user.attended ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                {{ user.attended ? 'Attended' : 'Not attended' }}
+              </span>
+            </td>
+            <td class="actions-col">
+              <div class="row-actions">
+                <button mat-icon-button class="row-action attend" matTooltip="Mark attended"
+                  [disabled]="user.attended || isAttendanceClosed() || attendanceUpdatingUserIds.has(user._id)"
+                  (click)="markAttendance(user)">
+                  <mat-icon>how_to_reg</mat-icon>
+                </button>
+                <button mat-icon-button class="row-action remove" matTooltip="Remove from programme"
+                  (click)="onRemoveRegisteredUser(user)">
+                  <mat-icon>person_remove</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Waitlist -->
+  <div class="detail-card" *ngIf="!isAddMode">
+    <div class="card-header-row">
+      <div class="card-title-group">
+        <div class="card-icon waitlist"><mat-icon>hourglass_empty</mat-icon></div>
+        <h2 class="card-title">Waitlisted users</h2>
+        <span class="count-chip" *ngIf="!waitlistLoading">{{ waitlistUsers.length }}</span>
+      </div>
+      <button mat-stroked-button class="notify-btn" (click)="onNotifyWaitlist()"
+        [disabled]="waitlistLoading || waitlistUsers.length === 0">
+        <mat-icon>campaign</mat-icon>
+        Notify waitlist
+      </button>
+    </div>
+
+    <div class="skeleton-container" *ngIf="waitlistLoading">
+      <ngx-skeleton-loader count="3" [theme]="{ 'border-radius': '8px', height: '44px', 'margin-bottom': '8px' }">
+      </ngx-skeleton-loader>
+    </div>
+
+    <div class="empty-state" *ngIf="!waitlistLoading && waitlistUsers.length === 0">
+      <mat-icon class="empty-icon">hourglass_empty</mat-icon>
+      <p class="empty-text">No users on the waitlist</p>
+    </div>
+
+    <div class="table-wrapper" *ngIf="!waitlistLoading && waitlistUsers.length > 0">
+      <table class="detail-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of waitlistUsers">
+            <td class="name-cell">{{user.fullName}}</td>
+            <td class="email-cell">{{user.email}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

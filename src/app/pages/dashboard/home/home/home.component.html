@@ -1,10 +1,12 @@
-<div class="user-page-container">
-  <div class="row">
-    <div class="col-md-6 text-left">
-      <h5 class="home-title">Dashboard Overview</h5>
+<div class="modern-home-page">
+  <!-- Page Header -->
+  <div class="home-header">
+    <div class="header-titles">
+      <h1 class="page-title">Dashboard Overview</h1>
+      <p class="page-subtitle">Your organisation's wellness at a glance</p>
     </div>
-    <div class="col-md-6 text-right">
-      <mat-form-field style="padding-right: 10px" appearance="fill">
+    <div class="header-filters">
+      <mat-form-field appearance="outline" class="filter-field preset-field">
         <mat-label>Select Range</mat-label>
         <mat-select
           [(ngModel)]="presetRange"
@@ -15,7 +17,7 @@
           <mat-option value="lastYear">Last Year</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline" class="filter-field range-field">
         <mat-label>Enter a date range</mat-label>
         <mat-date-range-input [rangePicker]="picker">
           <input
@@ -33,463 +35,379 @@
         </mat-date-range-input>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
-
-        <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')"
-          >Invalid start date</mat-error
-        >
-        <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')"
-          >Invalid end date</mat-error
-        >
       </mat-form-field>
     </div>
   </div>
-  <div class="skeleton-loader-item">
+
+  <!-- Loading skeleton -->
+  <div class="skeleton-container" *ngIf="!initializedLoading">
     <ngx-skeleton-loader
-      *ngIf="!initializedLoading"
       count="8"
-      [theme]="{ 'border-radius': '0', height: '10vh' }"
+      [theme]="{ 'border-radius': '12px', height: '10vh', 'margin-bottom': '12px' }"
     >
     </ngx-skeleton-loader>
   </div>
 
   <div class="indicator-container" *ngIf="initializedLoading">
-    <!-- Top KPI Cards Row -->
-    <div class="row mb-4">
-      <div class="col-md-3">
-        <mat-card class="kpi-card">
-          <mat-card-content>
-            <p class="primary-c card-title">
-              Therapy Credits
-              <button
-                style="height: 0px; line-height: 0px; width: 0px"
-                mat-icon-button
-                matTooltip="Therapy sessions completed or forfeited"
-                aria-label="Therapy sessions completed or forfeited"
-              >
-                <mat-icon>help_outline</mat-icon>
-              </button>
-            </p>
-            <h2 class="kpi-number">{{ numOfTherapy?.completed + numOfTherapy?.forfeited }}</h2>
-            <p class="kpi-subtitle">{{ numOfTherapy?.upcoming }} Upcoming Sessions</p>
-            <p class="kpi-subtitle" *ngIf="company?.configs?.EAPTotalCredits > 0">
-              {{ company?.configs?.EAPTotalCredits }} pooled credits left
-            </p>
-          </mat-card-content>
-        </mat-card>
-      </div>
-      <div class="col-md-3">
-        <mat-card class="kpi-card">
-          <mat-card-content>
-            <p class="primary-c card-title">
-              Work Life Credits
-              <button
-                style="height: 0px; line-height: 0px; width: 0px"
-                mat-icon-button
-                matTooltip="Work-life sessions booked by users"
-                aria-label="Work-life sessions booked by users"
-              >
-                <mat-icon>help_outline</mat-icon>
-              </button>
-            </p>
-            <h2 class="kpi-number">{{ numOfWL?.completed + numOfWL?.forfeited }}</h2>
-            <p class="kpi-subtitle">{{ numOfWL?.upcoming }} Upcoming Sessions</p>
-            <p class="kpi-subtitle" *ngIf="company?.configs?.WorkLifeTotalCredits > 0">
-              {{ company?.configs?.WorkLifeTotalCredits }} pooled credits left
-            </p>
-          </mat-card-content>
-        </mat-card>
-      </div>
-      <div class="col-md-3">
-        <mat-card class="kpi-card">
-          <mat-card-content>
-            <p class="primary-c card-title">
-              Onboarded Users
-              <button
-                style="height: 0px; line-height: 0px; width: 0px"
-                mat-icon-button
-                matTooltip="Users that have logged in at least once"
-                aria-label="Users that have logged in at least once"
-              >
-                <mat-icon>help_outline</mat-icon>
-              </button>
-            </p>
-            <h2 class="kpi-number">{{ onboardedUsers }}</h2>
-            <p class="kpi-subtitle">Active app users</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
-      <div class="col-md-3">
-        <mat-card class="kpi-card">
-          <mat-card-content>
-            <p class="primary-c card-title">Total Users</p>
-            <h2 class="kpi-number">{{ totalUsers }}</h2>
-            <p class="kpi-subtitle">Registered users</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </div>
-
-    <!-- Challenge Stats Row -->
-    <div class="row mb-4">
-      <div class="col-md-8">
-        <mat-card class="challenge-stats-card">
-          <mat-card-content>
-            <p class="primary-c card-title">
-              Challenge Participation
-              <button
-                style="height: 0px; line-height: 0px; width: 0px"
-                mat-icon-button
-                matTooltip="Challenge participation and completion metrics"
-                aria-label="Challenge participation and completion metrics"
-              >
-                <mat-icon>help_outline</mat-icon>
-              </button>
-            </p>
-            <div *ngIf="challengeStats" class="stats-grid">
-              <div class="stat-item">
-                <h3 class="stat-number">{{ challengeStats.uniqueParticipants }}</h3>
-                <p class="stat-label">Unique Participants</p>
-              </div>
-              <div class="stat-item">
-                <h3 class="stat-number">{{ challengeStats.totalParticipants }}</h3>
-                <p class="stat-label">Total Participants</p>
-              </div>
-              <div class="stat-item">
-                <h3 class="stat-number">{{ challengeStats.totalCompletions }}</h3>
-                <p class="stat-label">Total Completions</p>
-              </div>
-              <div class="stat-item">
-                <h3 class="stat-number text-success">{{ challengeStats.pctCompletion | number: '1.0-2' }}%</h3>
-                <p class="stat-label">Completion Rate</p>
-              </div>
-            </div>
-            <div *ngIf="!challengeStats" class="loading-container">
-              <mat-spinner diameter="40"></mat-spinner>
-              <p class="mt-2">Loading challenge stats...</p>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-      <div class="col-md-4">
-        <mat-card class="controls-card">
-          <mat-card-content>
-            <p class="primary-c card-title">Settings & Export</p>
-            <div class="controls-section">
-              <mat-form-field appearance="outline" class="full-width mb-3">
-                <mat-label>Date Granularity</mat-label>
-                <mat-select [(ngModel)]="granularity" (selectionChange)="onGranularityChange()">
-                  <mat-option value="monthly">Monthly View</mat-option>
-                  <mat-option value="quarterly">Quarterly View</mat-option>
-                  <mat-option value="yearly">Yearly View</mat-option>
-                </mat-select>
-              </mat-form-field>
-              
-              <button 
-                mat-raised-button 
-                color="primary" 
-                (click)="exportKpiMetrics()"
-                [disabled]="!challengeStats"
-                class="full-width mb-3">
-                <mat-icon>download</mat-icon>
-                Export Challenge Metrics
-              </button>
-              
-              <div class="plan-info">
-                <div class="d-flex align-items-center">
-                  <mat-icon class="text-primary me-2">business</mat-icon>
-                  <div>
-                    <p class="mb-0 font-weight-bold">{{ company?.configs?.membership?.name }}</p>
-                    <small class="text-muted">Expires: {{ formatDate(company?.configs?.membershipExpireAt) }}</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </div>
-    <!-- Charts Row -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <mat-card class="chart-card">
-          <mat-card-content>
-            <p class="primary-c card-title">Therapy Top Concerns</p>
-            <p *ngIf="therapyChart?.canvas == null && !loading">
-              No available data for the selected date range
-            </p>
-            <mat-progress-bar
-              *ngIf="loading"
-              mode="indeterminate"
-              class="mb-3"
-            ></mat-progress-bar>
-
-            <div class="chart-container">
-              <canvas id="therapyChart" width="100" height="100"></canvas>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-      <div class="col-md-4">
-        <mat-card class="chart-card">
-          <mat-card-content>
-            <p class="primary-c card-title">Work Life Top Concerns</p>
-            <p *ngIf="wlChart?.canvas == null && !loading">
-              No available data for the selected date range
-            </p>
-            <mat-progress-bar
-              *ngIf="loading"
-              mode="indeterminate"
-              class="mb-3"
-            ></mat-progress-bar>
-
-            <div class="chart-container">
-              <canvas id="wlChart" width="100" height="100"></canvas>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-      <div class="col-md-4">
-        <mat-card class="chart-card">
-          <mat-card-content>
-            <p class="primary-c card-title">Chat Top Concerns</p>
-            <p *ngIf="chatChart?.canvas == null && !loading">
-              No available data for the selected date range
-            </p>
-            <mat-progress-bar
-              *ngIf="loading"
-              mode="indeterminate"
-              class="mb-3"
-            ></mat-progress-bar>
-
-            <div class="chart-container">
-              <canvas id="chatChart" width="100" height="100"></canvas>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-7">
-        <mat-card>
-          <mat-card-content>
-            <p class="primary-c card-title">
-              Users
-              <button
-                style="height: 0px; line-height: 0px; width: 0px"
-                mat-icon-button
-                matTooltip="Active Users are users that have logged in the app atleast once in the last 30 days"
-                aria-label="Active Users are users that have logged in the app atleast once in the last 30 days"
-              >
-                <mat-icon>help_outline</mat-icon>
-              </button>
-            </p>
-            <canvas id="usersChart" width="100" height="50"></canvas>
-          </mat-card-content>
-        </mat-card>
-      </div>
-      <div class="col-md-5">
-        <mat-card>
-          <mat-card-content>
-            <p class="primary-c card-title">Upcoming Programmes</p>
-            <table
-              style="width: 100%"
-              mat-table
-              [dataSource]="upcomingProgrammes"
-              matSort
-              matSortDisableClear
-              matSortDirection="desc"
-              *ngIf="upcomingProgrammes.length > 0"
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon therapy"><mat-icon>spa</mat-icon></div>
+        <div class="kpi-content">
+          <p class="kpi-label">
+            Therapy Credits
+            <mat-icon
+              class="help-icon"
+              matTooltip="Therapy sessions completed or forfeited"
+              aria-label="Therapy sessions completed or forfeited"
+              >help_outline</mat-icon
             >
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef>Name</th>
-                <td mat-cell *matCellDef="let row">
-                  {{ row?.name }}
-                </td>
-              </ng-container>
-              <!--date -->
-              <ng-container matColumnDef="date">
-                <th mat-header-cell *matHeaderCellDef>Date</th>
-                <td mat-cell *matCellDef="let row">
-                  {{ row?.date }}
-                </td>
-              </ng-container>
-              <!-- Registered -->
-              <ng-container matColumnDef="registeredNum">
-                <th mat-header-cell *matHeaderCellDef>Registered</th>
-                <td
-                  mat-cell
-                  *matCellDef="let row"
-                  [ngClass]="{ highlight: row?.isLower }"
-                >
-                  {{ row?.registeredUsers.length }}/{{ row?.capacity }}
-                </td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-            </table>
-            <ng-container *ngIf="upcomingProgrammes.length <= 0">
-              <h6>No upcoming programmes</h6>
-            </ng-container>
-            <br />
-          </mat-card-content>
-        </mat-card>
+          </p>
+          <h2 class="kpi-number">{{ numOfTherapy?.completed + numOfTherapy?.forfeited }}</h2>
+          <p class="kpi-subtitle">{{ numOfTherapy?.upcoming }} upcoming sessions</p>
+          <p class="kpi-subtitle" *ngIf="company?.configs?.EAPTotalCredits > 0">
+            {{ company?.configs?.EAPTotalCredits }} pooled credits left
+          </p>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon worklife"><mat-icon>self_improvement</mat-icon></div>
+        <div class="kpi-content">
+          <p class="kpi-label">
+            Work Life Credits
+            <mat-icon
+              class="help-icon"
+              matTooltip="Work-life sessions booked by users"
+              aria-label="Work-life sessions booked by users"
+              >help_outline</mat-icon
+            >
+          </p>
+          <h2 class="kpi-number">{{ numOfWL?.completed + numOfWL?.forfeited }}</h2>
+          <p class="kpi-subtitle">{{ numOfWL?.upcoming }} upcoming sessions</p>
+          <p class="kpi-subtitle" *ngIf="company?.configs?.WorkLifeTotalCredits > 0">
+            {{ company?.configs?.WorkLifeTotalCredits }} pooled credits left
+          </p>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon onboarded"><mat-icon>how_to_reg</mat-icon></div>
+        <div class="kpi-content">
+          <p class="kpi-label">
+            Onboarded Users
+            <mat-icon
+              class="help-icon"
+              matTooltip="Users that have logged in at least once"
+              aria-label="Users that have logged in at least once"
+              >help_outline</mat-icon
+            >
+          </p>
+          <h2 class="kpi-number">{{ onboardedUsers }}</h2>
+          <p class="kpi-subtitle">Active app users</p>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon total"><mat-icon>group</mat-icon></div>
+        <div class="kpi-content">
+          <p class="kpi-label">Total Users</p>
+          <h2 class="kpi-number">{{ totalUsers }}</h2>
+          <p class="kpi-subtitle">Registered users</p>
+        </div>
       </div>
     </div>
-    <br />
-    <br />
-    <div class="row">
-      <div class="col-md-6">
-        <mat-card>
-          <mat-card-content>
-            <p class="primary-c card-title">
-              Sessions feedback summary
 
-              <button
-                style="height: 0px; line-height: 0px; width: 0px"
-                mat-icon-button
-                matTooltip="Reflects completed user feedback from therapy and work-life session/s."
-                aria-label="Reflects completed user feedback from therapy and work-life session/s."
-              >
-                <mat-icon>help_outline</mat-icon>
-              </button>
-            </p>
-            <span *ngIf="numOfResponses" class="text-center">
-              Based on {{ numOfResponses }} response(s)
-            </span>
-            <br />
-            <br />
-            <div *ngIf="sessionsFeedback[3]" class="row">
-              <div class="col-md-4">
-                <p style="color: black; font-weight: 700">
-                  Overall rating (1-10)
-                </p>
-              </div>
-              <div class="col-md-8">
-                <p>
-                  <ngb-progressbar
-                    type="warning"
-                    [value]="getRatingValue(sessionsFeedback[3]?.averageRating)"
-                  >
-                    <span class="text-white">
-                      {{
-                        sessionsFeedback[3]?.averageRating | number : "1.2-2"
-                      }}
-                    </span></ngb-progressbar
-                  >
-                </p>
-                <div class="row">
-                  <div class="col-md-6 text-left">
-                    <h6>0</h6>
-                  </div>
-                  <div class="col-md-6 text-right">
-                    <h6>10</h6>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <canvas id="sessionFeedbackChart" width="100" height="100"></canvas>
-            <!-- <div id="tooltip"></div> -->
-
-            <br />
-            <div *ngIf="sessionsFeedback?.length > 0" class="text-center">
-              <span class="text-center">
-                Sessions are rated 1 to 5; 1 being “very poor” and 5
-                “excellent”.
-              </span>
-            </div>
-            <p *ngIf="sessionsFeedback?.length == 0">
-              No available data for the selected date range
-            </p>
-            <mat-progress-bar
-              *ngIf="loading"
-              mode="indeterminate"
-            ></mat-progress-bar>
-            <br /><br />
-
-            <br />
-          </mat-card-content>
-        </mat-card>
+    <!-- Challenge Stats + Settings -->
+    <div class="grid-8-4">
+      <div class="detail-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <div class="card-icon challenge"><mat-icon>emoji_events</mat-icon></div>
+            <h2 class="card-title">Challenge Participation</h2>
+            <mat-icon
+              class="help-icon"
+              matTooltip="Challenge participation and completion metrics"
+              aria-label="Challenge participation and completion metrics"
+              >help_outline</mat-icon
+            >
+          </div>
+        </div>
+        <div *ngIf="challengeStats" class="stats-grid">
+          <div class="stat-item">
+            <h3 class="stat-number">{{ challengeStats.uniqueParticipants }}</h3>
+            <p class="stat-label">Unique Participants</p>
+          </div>
+          <div class="stat-item">
+            <h3 class="stat-number">{{ challengeStats.totalParticipants }}</h3>
+            <p class="stat-label">Total Participants</p>
+          </div>
+          <div class="stat-item">
+            <h3 class="stat-number">{{ challengeStats.totalCompletions }}</h3>
+            <p class="stat-label">Total Completions</p>
+          </div>
+          <div class="stat-item">
+            <h3 class="stat-number success">{{ challengeStats.pctCompletion | number: '1.0-2' }}%</h3>
+            <p class="stat-label">Completion Rate</p>
+          </div>
+        </div>
+        <div *ngIf="!challengeStats" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading challenge stats...</p>
+        </div>
       </div>
-      <br /><br />
-      <div class="col-md-6">
-        <mat-card>
-          <mat-card-content>
-            <p class="primary-c card-title">Top Video Views</p>
-            <span>Shown by popularity</span>
-            <br />
-            <br />
-            <!-- <p *ngIf="sessionsFeedback?.length == 0">
-              No available data for the selected date range
-            </p> -->
-            <div *ngIf="viewershipData">
-              <mat-progress-bar
-                *ngIf="loading"
-                mode="indeterminate"
-              ></mat-progress-bar>
-              <div
-                *ngFor="
-                  let view of viewershipData['video']
-                    | keyvalue : originalOrder;
-                  let i = index
-                "
-              >
-                <div *ngIf="i < 3" class="row">
-                  <div class="col-md-12">
-                    <p>{{ i + 1 }}. {{ view.key }}</p>
-                  </div>
-                  <!-- <div class="col-md-6">
-                    <p>
-                      <ngb-progressbar
-                        type="warning"
-                        [value]="view.views"
-                      ></ngb-progressbar>
-                      <span>{{ view.value }}</span>
-                    </p>
-                  </div> -->
-                </div>
-              </div>
 
-              <br />
+      <div class="detail-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <div class="card-icon settings"><mat-icon>tune</mat-icon></div>
+            <h2 class="card-title">Settings &amp; Export</h2>
+          </div>
+        </div>
+        <div class="controls-section">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Date Granularity</mat-label>
+            <mat-select [(ngModel)]="granularity" (selectionChange)="onGranularityChange()">
+              <mat-option value="monthly">Monthly View</mat-option>
+              <mat-option value="quarterly">Quarterly View</mat-option>
+              <mat-option value="yearly">Yearly View</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-              <!-- Reads -->
-              <p class="primary-c card-title">Top Article Reads</p>
-              <span>Shown by popularity</span>
-              <br />
-              <br />
-              <!-- <p *ngIf="sessionsFeedback?.length == 0">
-              No available data for the selected date range
-            </p> -->
+          <button
+            mat-flat-button
+            color="primary"
+            (click)="exportKpiMetrics()"
+            [disabled]="!challengeStats"
+            class="full-width export-btn">
+            <mat-icon>download</mat-icon>
+            Export Challenge Metrics
+          </button>
 
-              <div
-                *ngFor="
-                  let article of viewershipData['article']
-                    | keyvalue : originalOrder;
-                  let i = index
-                "
-              >
-                <div *ngIf="i < 3" class="row">
-                  <div class="col-md-12">
-                    <p>{{ i + 1 }}. {{ article.key }}</p>
-                  </div>
-                  <!-- <div class="col-md-6">
-                    <p>
-                      <ngb-progressbar
-                        type="primary"
-                        [value]="article.reads"
-                      ></ngb-progressbar>
-                      <span>{{ article.value }}</span>
-                    </p>
-                  </div> -->
-                </div>
-              </div>
-
-              <br />
+          <div class="plan-info">
+            <mat-icon>business</mat-icon>
+            <div>
+              <p class="plan-name">{{ company?.configs?.membership?.name }}</p>
+              <p class="plan-expiry">Expires: {{ formatDate(company?.configs?.membershipExpireAt) }}</p>
             </div>
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Concerns Charts -->
+    <div class="grid-3">
+      <div class="detail-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <div class="card-icon therapy-chart"><mat-icon>spa</mat-icon></div>
+            <h2 class="card-title">Therapy Top Concerns</h2>
+          </div>
+        </div>
+        <p class="empty-note" *ngIf="therapyChart?.canvas == null && !loading">
+          No available data for the selected date range
+        </p>
+        <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+        <div class="chart-container">
+          <canvas id="therapyChart" width="100" height="100"></canvas>
+        </div>
+      </div>
+      <div class="detail-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <div class="card-icon worklife-chart"><mat-icon>self_improvement</mat-icon></div>
+            <h2 class="card-title">Work Life Top Concerns</h2>
+          </div>
+        </div>
+        <p class="empty-note" *ngIf="wlChart?.canvas == null && !loading">
+          No available data for the selected date range
+        </p>
+        <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+        <div class="chart-container">
+          <canvas id="wlChart" width="100" height="100"></canvas>
+        </div>
+      </div>
+      <div class="detail-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <div class="card-icon chat-chart"><mat-icon>chat_bubble_outline</mat-icon></div>
+            <h2 class="card-title">Chat Top Concerns</h2>
+          </div>
+        </div>
+        <p class="empty-note" *ngIf="chatChart?.canvas == null && !loading">
+          No available data for the selected date range
+        </p>
+        <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+        <div class="chart-container">
+          <canvas id="chatChart" width="100" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users chart + Upcoming programmes -->
+    <div class="grid-7-5">
+      <div class="detail-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <div class="card-icon users"><mat-icon>group</mat-icon></div>
+            <h2 class="card-title">Users</h2>
+            <mat-icon
+              class="help-icon"
+              matTooltip="Active Users are users that have logged in the app at least once in the last 30 days"
+              aria-label="Active Users are users that have logged in the app at least once in the last 30 days"
+              >help_outline</mat-icon
+            >
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="usersChart" width="100" height="50"></canvas>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <div class="card-icon programmes"><mat-icon>event</mat-icon></div>
+            <h2 class="card-title">Upcoming Programmes</h2>
+          </div>
+          <a mat-button color="primary" class="view-all-link" routerLink="/dashboard/programmes">
+            View all
+            <mat-icon>chevron_right</mat-icon>
+          </a>
+        </div>
+        <div class="table-wrapper" *ngIf="upcomingProgrammes.length > 0">
+          <table
+            mat-table
+            [dataSource]="upcomingProgrammes"
+            matSort
+            matSortDisableClear
+            matSortDirection="desc"
+            class="home-table"
+          >
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let row" class="name-cell">
+                {{ row?.name }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let row">
+                {{ row?.date }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="registeredNum">
+              <th mat-header-cell *matHeaderCellDef>Registered</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="registration-pill" [class.low]="row?.isLower">
+                  {{ row?.registeredUsers.length }}/{{ row?.capacity }}
+                </span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+        <div class="empty-state" *ngIf="upcomingProgrammes.length <= 0">
+          <mat-icon class="empty-icon">event_busy</mat-icon>
+          <p class="empty-text">No upcoming programmes</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback + Top content -->
+    <div class="grid-6-6">
+      <div class="detail-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <div class="card-icon feedback"><mat-icon>rate_review</mat-icon></div>
+            <h2 class="card-title">Sessions Feedback Summary</h2>
+            <mat-icon
+              class="help-icon"
+              matTooltip="Reflects completed user feedback from therapy and work-life session/s."
+              aria-label="Reflects completed user feedback from therapy and work-life session/s."
+              >help_outline</mat-icon
+            >
+          </div>
+          <span class="count-chip" *ngIf="numOfResponses">{{ numOfResponses }} response(s)</span>
+        </div>
+
+        <div class="overall-rating" *ngIf="sessionsFeedback[3]">
+          <p class="rating-label">Overall rating (1–10)</p>
+          <div class="rating-bar">
+            <ngb-progressbar
+              type="warning"
+              [value]="getRatingValue(sessionsFeedback[3]?.averageRating)"
+            >
+              <span class="rating-value">
+                {{ sessionsFeedback[3]?.averageRating | number : "1.2-2" }}
+              </span>
+            </ngb-progressbar>
+            <div class="rating-scale">
+              <span>0</span>
+              <span>10</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="sessionFeedbackChart" width="100" height="100"></canvas>
+        </div>
+
+        <p class="footnote" *ngIf="sessionsFeedback?.length > 0">
+          Sessions are rated 1 to 5; 1 being “very poor” and 5 “excellent”.
+        </p>
+        <p class="empty-note" *ngIf="sessionsFeedback?.length == 0">
+          No available data for the selected date range
+        </p>
+        <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+      </div>
+
+      <div class="detail-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <div class="card-icon content"><mat-icon>trending_up</mat-icon></div>
+            <h2 class="card-title">Top Content</h2>
+          </div>
+          <span class="subtitle-chip">Shown by popularity</span>
+        </div>
+        <div *ngIf="viewershipData">
+          <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+          <h3 class="content-subheading">
+            <mat-icon>ondemand_video</mat-icon>
+            Top Video Views
+          </h3>
+          <div class="ranked-list">
+            <ng-container
+              *ngFor="
+                let view of viewershipData['video'] | keyvalue : originalOrder;
+                let i = index
+              "
+            >
+              <div class="ranked-item" *ngIf="i < 3">
+                <span class="rank-badge">{{ i + 1 }}</span>
+                <span class="ranked-title">{{ view.key }}</span>
+              </div>
+            </ng-container>
+          </div>
+
+          <h3 class="content-subheading">
+            <mat-icon>description</mat-icon>
+            Top Article Reads
+          </h3>
+          <div class="ranked-list">
+            <ng-container
+              *ngFor="
+                let article of viewershipData['article'] | keyvalue : originalOrder;
+                let i = index
+              "
+            >
+              <div class="ranked-item" *ngIf="i < 3">
+                <span class="rank-badge">{{ i + 1 }}</span>
+                <span class="ranked-title">{{ article.key }}</span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
       </div>
     </div>
   </div>
