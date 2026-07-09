@@ -146,6 +146,21 @@ export class ProgrammeDetailComponent implements OnInit {
     return !this.currentProgramme || !this.currentProgramme.endDate || new Date(this.currentProgramme.endDate) < new Date();
   }
 
+  getProgrammeStatus() {
+    if (!this.currentProgramme) return '';
+    const now = new Date();
+    if (new Date(this.currentProgramme.endDate) < now) return 'Ended';
+    if (new Date(this.currentProgramme.startDate) <= now) return 'In progress';
+    return 'Upcoming';
+  }
+
+  getProgrammeStatusClass() {
+    const status = this.getProgrammeStatus();
+    if (status === 'Ended') return 'ended';
+    if (status === 'In progress') return 'in-progress';
+    return 'upcoming';
+  }
+
   getAttendanceUrl() {
     const programmeId = encodeURIComponent(String(this.currentProgramme && this.currentProgramme._id || ''));
     const eventName = encodeURIComponent(this.currentProgramme && this.currentProgramme.name || '');

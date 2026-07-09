@@ -27,8 +27,8 @@ interface RegistrationUploadRow {
   parq_bone_joint_problem: boolean;
   parq_blood_pressure_drugs: boolean;
   parq_other_reason: boolean;
-  liabilityConsent: boolean;
-  pdpaConsent: boolean;
+  liabilityConsent?: boolean;
+  pdpaConsent?: boolean;
 }
 
 @Component({
@@ -247,9 +247,21 @@ export class BatchUploadUsersComponent implements OnInit {
 
   private parseRegistrationSheet(headers: any[], data: any[][]) {
     const columnMap: any = {};
+    const requiredColumns = [
+      'fullName',
+      'phoneNumber',
+      'gender',
+      'dateOfBirth',
+      'address',
+      'chasCardColour',
+      'sgEnableStatus',
+      ...this.parqKeys
+    ];
     Object.keys(this.registrationHeaders).forEach((key) => {
       columnMap[key] = this.findHeaderIndex(headers, this.registrationHeaders[key]);
-      if (columnMap[key] < 0) throw new Error(`Missing required column: ${key}`);
+      if (requiredColumns.includes(key) && columnMap[key] < 0) {
+        throw new Error(`Missing required column: ${key}`);
+      }
     });
 
     const rows: RegistrationUploadRow[] = [];
@@ -268,8 +280,8 @@ export class BatchUploadUsersComponent implements OnInit {
           address: this.requiredValue(cells[columnMap.address], 'Address'),
           chasCardColour: this.requiredValue(cells[columnMap.chasCardColour], 'CHAS card colour'),
           sgEnableStatus: this.requiredValue(cells[columnMap.sgEnableStatus], 'SG Enable status'),
-          liabilityConsent: this.parseBoolean(cells[columnMap.liabilityConsent], 'Liability consent'),
-          pdpaConsent: this.parseBoolean(cells[columnMap.pdpaConsent], 'PDPA consent')
+          liabilityConsent: this.optionalBoolean(cells[columnMap.liabilityConsent], 'Liability consent'),
+          pdpaConsent: this.optionalBoolean(cells[columnMap.pdpaConsent], 'PDPA consent')
         };
         this.parqKeys.forEach((key) => row[key] = this.parseBoolean(cells[columnMap[key]], key));
         const phone = String(row.phoneNumber).replace(/\s+/g, '').replace(/^\+?65/, '');
@@ -306,6 +318,11 @@ export class BatchUploadUsersComponent implements OnInit {
     if (['yes', 'y', 'true', '1'].includes(normalized)) return true;
     if (['no', 'n', 'false', '0'].includes(normalized)) return false;
     throw new Error(`${field} must be Yes or No`);
+  }
+
+  private optionalBoolean(value: any, field: string) {
+    if (value === undefined || value === null || String(value).trim() === '') return undefined;
+    return this.parseBoolean(value, field);
   }
 
   private toIsoDate(value: any) {

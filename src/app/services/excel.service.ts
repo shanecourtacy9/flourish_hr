@@ -163,14 +163,12 @@ export class ExcelService {
       'PAR-Q: Dizziness, balance or consciousness',
       'PAR-Q: Bone or joint problem made worse by activity',
       'PAR-Q: Blood pressure or heart medication',
-      'PAR-Q: Other reason not to do physical activity',
-      'Release of liability consent (Yes/No)',
-      'Photography / videography consent (Yes/No)'
+      'PAR-Q: Other reason not to do physical activity'
     ];
     const instructions = [
       ['PAR-Q registration sheet'],
       ['Complete one row per participant.'],
-      ['Use Yes or No for every PAR-Q and consent column.'],
+      ['Use Yes or No for every PAR-Q column.'],
       ['Use DD/MM/YYYY for dates of birth.'],
       ['Do not change the column headings on the PAR-Q Registration sheet.']
     ];
