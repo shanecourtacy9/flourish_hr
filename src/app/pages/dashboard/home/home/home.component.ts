@@ -375,7 +375,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                   position: "bottom",
                 },
                 title: {
-                  display: true,
+                  display: false,
                   text: "Therapy Sessions Top Concerns",
                 },
               },
@@ -412,7 +412,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                   position: "bottom",
                 },
                 title: {
-                  display: true,
+                  display: false,
                   text: "Work Life Sessions Top Concerns",
                 },
               },
@@ -449,7 +449,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                   position: "bottom",
                 },
                 title: {
-                  display: true,
+                  display: false,
                   text: "Chat Sessions Top Concerns",
                 },
               },

@@ -1,75 +1,120 @@
-<mat-toolbar>
-    <button mat-icon-button color="primary" (click)='goBack()'>
-        <mat-icon class="mat-18">arrow_back</mat-icon>
-    </button>
-</mat-toolbar>
-<div class="skeleton-loader-item" *ngIf='loading$'>
-    <ngx-skeleton-loader count="10" [theme]="{ 'border-radius': '0', height: '50px' }">
-    </ngx-skeleton-loader>
-</div>
-<div class='container' fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="60px" fxLayoutAlign='center center'>
-    <!-- <div class='spinner-container' *ngIf='loading$'>
-        <mat-spinner color='accent'></mat-spinner>
-      </div> -->
-    <mat-card fxFlex="95%" *ngIf='!loading$'>
-        <div class='card-header'>
-            {{managementMode}}
+<div class="modern-detail-page">
+  <!-- Page Header -->
+  <div class="detail-header">
+    <div class="header-main">
+      <button mat-icon-button class="back-button" (click)="goBack()" matTooltip="Back to users" aria-label="Back to users">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-titles">
+        <h1 class="page-title">
+          {{ isAddMode ? 'New User' : (currentUser?.fullName || 'User Details') }}
+        </h1>
+        <p class="page-subtitle" *ngIf="isAddMode">Add an employee to your organisation</p>
+        <div class="header-meta" *ngIf="!isAddMode && currentUser">
+          <span class="meta-chip">
+            <mat-icon>mail_outline</mat-icon>
+            {{ currentUser.email }}
+          </span>
+          <span class="meta-chip" *ngIf="currentUser.phoneNumber">
+            <mat-icon>phone</mat-icon>
+            {{ currentUser.phoneNumber }}
+          </span>
+          <span class="status-badge" [ngClass]="checkIsMember(currentUser) ? 'member' : 'non-member'">
+            <mat-icon class="status-icon">{{ checkIsMember(currentUser) ? 'verified' : 'person_outline' }}</mat-icon>
+            {{ checkIsMember(currentUser) ? 'Member' : 'Not a member' }}
+          </span>
         </div>
-        <mat-card-content>
-            <form class='form-container' autocomplete="off" fxLayout="row wrap" fxLayoutGap="30px" fxLayoutAlign="start  center"
-                [formGroup]='userForm' (ngSubmit)='updateUser()'>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Email</mat-label>
-                    <input formControlName="email" matInput type='email' required />
-                    <mat-error>Email is required</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>First name</mat-label>
-                    <input formControlName="firstName" matInput required />
-                    <mat-error>First name is required</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Last name</mat-label>
-                    <input formControlName="lastName" matInput required />
-                    <mat-error>Last name is required</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Phone number</mat-label>
-                    <input formControlName="phoneNumber" matInput/>
-                    <mat-error *ngIf="f.phoneNumber.errors?.maxlength">Phone number is less than 20 characters</mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Gender</mat-label>
-                    <mat-select formControlName='gender' required>
-                        <mat-option *ngFor="let gender of genders" [value]="gender.value">
-                            {{gender.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>Member</mat-label>
-                    <mat-select formControlName='isMember' required>
-                        <mat-option *ngFor="let membershipType of membershipTypes" [value]="membershipType">
-                            {{membershipType}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
-                    <mat-label>DOB</mat-label>
-                    <input matInput formControlName="dateOfBirth" [min]="minDate" [max]="maxDate"
-                        [matDatepicker]="picker" required>
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-                <div fxFlex="45%" fxFlex.lt-sm="100%" class='button-container'>
-                    <button *ngIf="!isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase'>
-                       Update
-                    </button>
-                    <button *ngIf="isAddMode" mat-raised-button type='submit' color='primary' class='text-uppercase'>
-                        Add
-                     </button>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading skeleton -->
+  <div class="skeleton-container" *ngIf="loading$">
+    <ngx-skeleton-loader count="6" [theme]="{ 'border-radius': '12px', height: '56px', 'margin-bottom': '12px' }">
+    </ngx-skeleton-loader>
+  </div>
+
+  <!-- User form -->
+  <div class="detail-card form-card" *ngIf="!loading$">
+    <form autocomplete="off" [formGroup]="userForm" (ngSubmit)="updateUser()">
+      <!-- Personal details -->
+      <section class="form-section">
+        <div class="section-header">
+          <div class="section-icon"><mat-icon>person_outline</mat-icon></div>
+          <div class="section-titles">
+            <h2 class="section-title">Personal details</h2>
+            <p class="section-hint">The user's name and profile information</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>First name</mat-label>
+            <input formControlName="firstName" matInput required />
+            <mat-error>First name is required</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Last name</mat-label>
+            <input formControlName="lastName" matInput required />
+            <mat-error>Last name is required</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Gender</mat-label>
+            <mat-select formControlName='gender' required>
+              <mat-option *ngFor="let gender of genders" [value]="gender.value">
+                {{gender.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Date of Birth</mat-label>
+            <input matInput formControlName="dateOfBirth" [min]="minDate" [max]="maxDate" [matDatepicker]="picker"
+              required>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- Contact & membership -->
+      <section class="form-section">
+        <div class="section-header">
+          <div class="section-icon"><mat-icon>contact_mail</mat-icon></div>
+          <div class="section-titles">
+            <h2 class="section-title">Contact &amp; membership</h2>
+            <p class="section-hint">How the user signs in and their membership status</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input formControlName="email" matInput type='email' required />
+            <mat-error *ngIf="f.email.errors?.required">Email is required</mat-error>
+            <mat-error *ngIf="f.email.errors?.email">Enter a valid email address</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Phone number</mat-label>
+            <input formControlName="phoneNumber" matInput />
+            <mat-hint>Optional</mat-hint>
+            <mat-error *ngIf="f.phoneNumber.errors?.maxlength">Phone number must be less than 20 characters</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Member</mat-label>
+            <mat-select formControlName='isMember' required>
+              <mat-option *ngFor="let membershipType of membershipTypes" [value]="membershipType">
+                {{membershipType}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <div class="form-footer">
+        <button mat-flat-button color="primary" type="submit" class="submit-btn">
+          {{ isAddMode ? 'Create User' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
