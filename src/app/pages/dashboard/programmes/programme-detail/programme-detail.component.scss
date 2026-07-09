@@ -54,3 +54,15 @@
     margin-right: 8px;
     display: inline-block;
   }
+
+  .attendance-status {
+    display: inline-block;
+    min-width: 88px;
+    margin-right: 12px;
+    color: #6b7280;
+    font-weight: 500;
+
+    &.attended { color: #15803d; }
+  }
+
+  .attendance-help { margin: 16px 0; color: #4b5563; }

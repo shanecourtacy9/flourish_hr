@@ -11,6 +11,11 @@
         fxFlexOffset.lt-sm='10px' (click)='exportFeedback()'>
         Download feedback report
     </button>
+    <a mat-flat-button color="primary" fxFlexOffset='20px' *ngIf='!isAddMode' [href]="getAttendanceUrl()" target="_blank" rel="noopener noreferrer"
+        fxFlexOffset.lt-sm='10px'>
+        Show attendance QR
+        <mat-icon>open_in_new</mat-icon>
+    </a>
 </mat-toolbar>
 
 <div class="skeleton-loader-item" *ngIf='loading$'>
@@ -151,7 +156,7 @@
                         <tr>
                             <th style="text-align:left;padding: 8px 12px">Name</th>
                             <th style="text-align:left;padding: 8px 12px">Email</th>
-                            <th style="width: 160px;padding: 8px 12px">Actions</th>
+                            <th style="width: 240px;padding: 8px 12px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -159,6 +164,13 @@
                             <td style="padding: 8px 12px">{{user.fullName}}</td>
                             <td style="padding: 8px 12px">{{user.email}}</td>
                             <td style="padding: 8px 12px">
+                                <span class="attendance-status" [class.attended]="user.attended">
+                                    {{user.attended ? 'Attended' : 'Not attended'}}
+                                </span>
+                                <button mat-stroked-button color="primary" [disabled]="user.attended || isAttendanceClosed() || attendanceUpdatingUserIds.has(user._id)" (click)="markAttendance(user)">
+                                    <mat-icon>how_to_reg</mat-icon>
+                                    Mark attended
+                                </button>
                                 <button mat-stroked-button color="warn" (click)="onRemoveRegisteredUser(user)">
                                     <mat-icon>person_remove</mat-icon>
                                     Remove
@@ -167,6 +179,24 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<div class="container" *ngIf="!isAddMode && currentProgramme?.registrationRequired === false">
+    <mat-card fxFlex="95%">
+        <div class="card-header">Mark attendance for a company user</div>
+        <mat-card-content>
+            <p class="attendance-help">This programme does not require registration. Enter a company user's email to add them to the event and mark them attended.</p>
+            <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start center">
+                <mat-form-field appearance="outline" fxFlex="45%" fxFlex.lt-md="100%">
+                    <mat-label>Company user email</mat-label>
+                    <input matInput type="email" [(ngModel)]="attendanceUserEmail" [disabled]="attendanceUserLoading || isAttendanceClosed()">
+                </mat-form-field>
+                <button mat-flat-button color="primary" [disabled]="attendanceUserLoading || isAttendanceClosed()" (click)="markUnregisteredCompanyUser()">
+                    {{attendanceUserLoading ? 'Finding user...' : 'Add and mark attended'}}
+                </button>
             </div>
         </mat-card-content>
     </mat-card>

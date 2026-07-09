@@ -144,30 +144,6 @@
   border-radius: 12px;
 }
 
-/* View Toggle */
-.view-toggle {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.view-toggle ::ng-deep .mat-button-toggle {
-  border: none;
-  border-radius: 0;
-}
-
-.view-toggle ::ng-deep .mat-button-toggle-checked {
-  background: #ff9b00;
-  color: white;
-}
-
-.view-toggle ::ng-deep .mat-button-toggle-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-}
-
 /* Action Buttons */
 .action-buttons {
   display: flex;
@@ -223,49 +199,6 @@
   padding: 24px 0;
 }
 
-/* Programmes Grid (Cards View) */
-.programmes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 24px;
-}
-
-.programme-card {
-  padding: 0;
-  margin: 16px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.programme-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-}
-
-.programme-card.outdated {
-  opacity: 0.7;
-}
-
-.programme-card.low-registration {
-  border-left: 4px solid #ef4444;
-}
-
-/* Card Header */
-.card-header {
-  padding: 20px 20px 0 20px;
-  display: flex;
-  justify-content: space-between;
-  border-radius: 16px;
-  align-items: center;
-  min-height: 44px; /* Ensure minimum height for action button */
-}
-
-.programme-status {
-  flex: 1;
-  min-width: 0; /* Allow text truncation if needed */
-  margin-right: 12px; /* Ensure spacing from actions */
-}
-
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -306,14 +239,6 @@
   height: 14px;
 }
 
-.card-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  flex-shrink: 0; /* Prevent shrinking */
-}
-
 .action-button {
   width: 36px;
   height: 36px;
@@ -325,127 +250,6 @@
 .action-button:hover {
   background: #f3f4f6;
   color: #374151;
-}
-
-/* Card Content */
-.card-content {
-  padding: 20px;
-  cursor: pointer;
-}
-
-.programme-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1f2937;
-  margin: 0 0 16px 0;
-  line-height: 1.3;
-}
-
-.programme-details {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.detail-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
-  color: #ff9b00;
-}
-
-.detail-text {
-  font-size: 14px;
-  color: #4b5563;
-  font-weight: 500;
-}
-
-/* Registration Progress */
-.registration-progress {
-  margin-top: 16px;
-}
-
-.progress-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.progress-label {
-  font-size: 13px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.progress-percentage {
-  font-size: 13px;
-  color: #374151;
-  font-weight: 600;
-}
-
-/* Card Footer */
-.card-footer {
-  padding: 0 20px 20px 20px;
-  border-top: 1px solid #f3f4f6;
-  margin-top: 20px;
-  padding-top: 20px;
-}
-
-.footer-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.footer-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.footer-btn mat-icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
-}
-
-.footer-btn.recruit {
-  border: 2px solid #3b82f6;
-  color: #3b82f6;
-}
-
-.footer-btn.recruit:hover:not([disabled]) {
-  background: #3b82f6;
-  color: white;
-}
-
-.footer-btn.reminder {
-  border: 2px solid #ff9b00;
-  color: #ff9b00;
-}
-
-.footer-btn.reminder:hover:not([disabled]) {
-  background: #ff9b00;
-  color: white;
-}
-
-.footer-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 /* Table View */
@@ -757,11 +561,6 @@
     padding: 20px;
   }
   
-  .programmes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
-  }
-  
   .header-content {
     gap: 24px;
   }
@@ -796,11 +595,6 @@
     padding: 12px 16px;
   }
   
-  .programmes-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
   .controls-content {
     flex-direction: column;
     align-items: stretch;
@@ -822,13 +616,6 @@
     justify-content: center;
   }
   
-  .view-toggle {
-    align-self: stretch;
-  }
-  
-  .view-toggle ::ng-deep .mat-button-toggle {
-    flex: 1;
-  }
 }
 
 @media (max-width: 480px) {
@@ -852,34 +639,10 @@
     padding: 16px;
   }
   
-  .programme-card {
-    margin-bottom: 16px;
-  }
-  
-  .card-header,
-  .card-content,
-  .card-footer {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-  
-  .programme-title {
-    font-size: 18px;
-  }
-  
-  .footer-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .footer-btn {
-    width: 100%;
-  }
 }
 
 /* Focus states for accessibility */
-.action-button:focus,
-.footer-btn:focus {
+.action-button:focus {
   outline: 2px solid #ff9b00;
   outline-offset: 2px;
 }
@@ -899,15 +662,3 @@
 .programmes-content {
   animation: fadeInUp 0.5s ease-out;
 }
-
-.programme-card {
-  animation: fadeInUp 0.3s ease-out;
-  animation-fill-mode: both;
-}
-
-.programme-card:nth-child(1) { animation-delay: 0.1s; }
-.programme-card:nth-child(2) { animation-delay: 0.2s; }
-.programme-card:nth-child(3) { animation-delay: 0.3s; }
-.programme-card:nth-child(4) { animation-delay: 0.4s; }
-.programme-card:nth-child(5) { animation-delay: 0.5s; }
-.programme-card:nth-child(6) { animation-delay: 0.6s; }

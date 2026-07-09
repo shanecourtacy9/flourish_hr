@@ -68,17 +68,6 @@
             <mat-date-range-picker #picker></mat-date-range-picker>
           </mat-form-field>
           
-          <!-- View Toggle -->
-          <mat-button-toggle-group class="view-toggle" [(ngModel)]="viewMode">
-            <mat-button-toggle value="cards">
-              <mat-icon>view_module</mat-icon>
-              Cards
-            </mat-button-toggle>
-            <mat-button-toggle value="table">
-              <mat-icon>table_rows</mat-icon>
-              Table
-            </mat-button-toggle>
-          </mat-button-toggle-group>
         </div>
         
         <!-- Action Buttons -->
@@ -116,139 +105,8 @@
         </ngx-skeleton-loader>
       </div>
 
-      <!-- Cards View -->
-      <div class="programmes-grid" *ngIf="!loading$ && viewMode === 'cards'">
-        <div 
-          class="programme-card modern-card hover-lift"
-          *ngFor="let programme of programmes; let i = index"
-          [class.outdated]="programme.isOutdated"
-          [class.low-registration]="programme.isLower"
-        >
-          <!-- Card Header -->
-          <div class="card-header">
-            <div class="programme-status">
-              <span 
-                class="status-badge" 
-                [ngClass]="getProgrammeStatusClass(programme)"
-              >
-                <mat-icon class="status-icon">{{ getProgrammeStatusIcon(programme) }}</mat-icon>
-                {{ getProgrammeStatus(programme) }}
-              </span>
-            </div>
-            
-            <div class="card-actions">
-              <button
-                mat-icon-button
-                class="action-button"
-                [matMenuTriggerFor]="cardMenu"
-                (click)="$event.stopPropagation()"
-              >
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              
-              <mat-menu #cardMenu="matMenu">
-                <button mat-menu-item (click)="editProgramme(programme)">
-                  <mat-icon>edit</mat-icon>
-                  Edit Programme
-                </button>
-                <button 
-                  mat-menu-item 
-                  (click)="recruitUsrs(programme)"
-                  [disabled]="programme.isOutdated || programme.isClicked"
-                >
-                  <mat-icon>person_add</mat-icon>
-                  Recruit Users
-                </button>
-                <button 
-                  mat-menu-item 
-                  (click)="reminderUsers(programme)"
-                  [disabled]="programme.isOutdated || programme.isClicked"
-                >
-                  <mat-icon>notifications</mat-icon>
-                  Send Reminders
-                </button>
-                <mat-divider></mat-divider>
-                <button 
-                  mat-menu-item 
-                  (click)="deleteProgramme(programme)"
-                  [disabled]="programme.isClicked"
-                  class="delete-action"
-                >
-                  <mat-icon>delete</mat-icon>
-                  Delete Programme
-                </button>
-              </mat-menu>
-            </div>
-          </div>
-
-          <!-- Card Content -->
-          <div class="card-content" (click)="editProgramme(programme)">
-            <h3 class="programme-title">{{ programme?.name }}</h3>
-            
-            <div class="programme-details">
-              <div class="detail-item">
-                <mat-icon class="detail-icon">calendar_today</mat-icon>
-                <span class="detail-text">{{ programme?.date | date:'mediumDate' }}</span>
-              </div>
-              
-              <div class="detail-item">
-                <mat-icon class="detail-icon">access_time</mat-icon>
-                <span class="detail-text">{{ programme?.startTime }} - {{ programme?.endTime }}</span>
-              </div>
-              
-              <div class="detail-item">
-                <mat-icon class="detail-icon">people</mat-icon>
-                <span class="detail-text">
-                  {{ programme?.registeredUsers?.length || 0 }} / {{ programme?.capacity }} registered
-                </span>
-              </div>
-            </div>
-            
-            <!-- Registration Progress -->
-            <div class="registration-progress">
-              <div class="progress-header">
-                <span class="progress-label">Registration Progress</span>
-                <span class="progress-percentage">
-                  {{ getRegistrationPercentage(programme) }}%
-                </span>
-              </div>
-              <mat-progress-bar 
-                mode="determinate" 
-                [value]="getRegistrationPercentage(programme)"
-                [color]="getProgressBarColor(programme)"
-              ></mat-progress-bar>
-            </div>
-          </div>
-
-          <!-- Card Footer -->
-          <div class="card-footer">
-            <div class="footer-actions">
-              <button
-                mat-stroked-button
-                class="footer-btn recruit"
-                [disabled]="programme.isOutdated || programme.isClicked"
-                (click)="recruitUsrs(programme); $event.stopPropagation()"
-              >
-                <mat-icon>person_add</mat-icon>
-                Recruit
-              </button>
-              
-              <button
-                mat-stroked-button
-                class="footer-btn reminder"
-                [disabled]="programme.isOutdated || programme.isClicked"
-                (click)="reminderUsers(programme); $event.stopPropagation()"
-              >
-                <mat-icon>notifications</mat-icon>
-                Remind
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Table View -->
-      <div class="table-container modern-card" *ngIf="!loading$ && viewMode === 'table'">
+      <!-- Programme Table -->
+      <div class="table-container modern-card" *ngIf="!loading$">
         <div class="table-wrapper">
           <table mat-table [dataSource]="programmes" matSort matSortDisableClear matSortDirection="desc" class="modern-table">
             <!-- Name Column -->

@@ -8,6 +8,7 @@ export const environment = {
   // url: "https://staging-dot-uphealthgcp.et.r.appspot.com",
 
   url: "https://production-dot-uphealthgcp.et.r.appspot.com",
+  attendanceUrl: "https://flourishsite.web.app/attendance",
 };
 
 /*

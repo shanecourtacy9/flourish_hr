@@ -39,7 +39,6 @@ export class ProgrammesComponent implements OnInit {
   rangeFormGroup: FormGroup;
   undo: boolean;
   isMember = false;
-  viewMode: 'cards' | 'table' = 'cards';
   constructor(
     private programmesService: ProgrammesService,
     private router: Router,

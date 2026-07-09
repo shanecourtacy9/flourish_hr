@@ -147,5 +147,43 @@ export class ExcelService {
     /* save to file */
     XLSX.writeFile(wb, `${fileName}.xlsx`);
   }
-}
 
+  exportParqRegistrationTemplate(): void {
+    const headers = [
+      'Participant name',
+      'Contact no',
+      'Gender',
+      'Date of birth (DD/MM/YYYY)',
+      'Address',
+      'CHAS card colour',
+      'SG Enable',
+      'PAR-Q: Heart condition / doctor',
+      'PAR-Q: Chest pain during physical activity',
+      'PAR-Q: Chest pain in the past month while not exercising',
+      'PAR-Q: Dizziness, balance or consciousness',
+      'PAR-Q: Bone or joint problem made worse by activity',
+      'PAR-Q: Blood pressure or heart medication',
+      'PAR-Q: Other reason not to do physical activity',
+      'Release of liability consent (Yes/No)',
+      'Photography / videography consent (Yes/No)'
+    ];
+    const instructions = [
+      ['PAR-Q registration sheet'],
+      ['Complete one row per participant.'],
+      ['Use Yes or No for every PAR-Q and consent column.'],
+      ['Use DD/MM/YYYY for dates of birth.'],
+      ['Do not change the column headings on the PAR-Q Registration sheet.']
+    ];
+    const workbook = XLSX.utils.book_new();
+    const registrationSheet = XLSX.utils.aoa_to_sheet([headers]);
+    registrationSheet['!cols'] = headers.map((header, index) => ({
+      width: index < 7 ? 24 : 42
+    }));
+    registrationSheet['!freeze'] = { xSplit: 0, ySplit: 1 };
+    const guidanceSheet = XLSX.utils.aoa_to_sheet(instructions);
+    guidanceSheet['!cols'] = [{ width: 82 }];
+    XLSX.utils.book_append_sheet(workbook, registrationSheet, 'PAR-Q Registration');
+    XLSX.utils.book_append_sheet(workbook, guidanceSheet, 'Guidance');
+    XLSX.writeFile(workbook, 'PAR-Q_registration_template.xlsx');
+  }
+}

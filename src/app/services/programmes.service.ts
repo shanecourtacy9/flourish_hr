@@ -170,6 +170,20 @@ export class ProgrammesService {
     )
   }
 
+  getAttendanceUsersByProgrammeId(id) {
+    return this.http.get(`${URL}/scheduledProgrammes/${id}/attendance/users`).pipe(
+      map(res => res['users']),
+      catchError(err => { throw err; })
+    )
+  }
+
+  markAttendance(programmeId: string, userId: string) {
+    this.loadingSubject.next(true)
+    return this.http.post(`${URL}/scheduledProgrammes/${programmeId}/attendance/${userId}`, {}).pipe(
+      finalize(() => this.loadingSubject.next(false))
+    )
+  }
+
   /**
    * get waitlisted users for a programme
    * @param id

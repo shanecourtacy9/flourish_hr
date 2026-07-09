@@ -1,88 +1,85 @@
 <div>
-    <ng-container *ngIf="loading$">
-        <div class="spinner-container">
-            <mat-spinner diameter='20' strokeWidth='50'></mat-spinner>
-        </div>
-    </ng-container>
-    <mat-toolbar fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign='start center'>
-        <button [disabled]='loading$' mat-icon-button color="primary" class='text-uppercase' (click)='goBack()'>
-            <mat-icon class="mat-18">arrow_back</mat-icon>
-        </button>
-        <form [formGroup]="fileUploadForm" novalidate>
-            <mat-form-field appearance="outline" color='primary'>
-                <ngx-mat-file-input [disabled]='loading$' formControlName="coacheeFile" multiple='false' (change)='onFileChange($event)'
-                    [accept]="'.xlsx,.xls'"></ngx-mat-file-input>
-                <mat-icon matSuffix>attach_file</mat-icon>
-            </mat-form-field>
-        </form>
-        <a fxFlexAlign='end' href='https://storage.googleapis.com/flourish/uploadfiles/User_batch_upload_template.xlsx'>
-            <small>
-               Download template
-            </small>
-        </a>
-        <span class='span-space'></span>
-        <button [disabled]='loading$' mat-flat-button color="primary" class='text-uppercase' fxFlexOffset='20px' fxFlexOffset.lt-sm='10px'
-            (click)='uploadUsers()'>
-            upload
-        </button>
-        <!-- <button [disabled]='loading$' mat-flat-button color="primary" class='text-uppercase' fxFlexOffset='20px' fxFlexOffset.lt-sm='10px'
-            (click)='cancelUpload()'>
-            cancel
-        </button> -->
-    </mat-toolbar>
+  <ng-container *ngIf="loading$">
+    <div class="spinner-container"><mat-spinner diameter="20" strokeWidth="50"></mat-spinner></div>
+  </ng-container>
 
-    <div class='table-card-container'>
-        <mat-card [ngStyle]="{'opacity':coachees.length? 1 : 0 }">
-            <mat-card-content>
-                <table mat-table [dataSource]='coacheeDataSource' *ngIf='coachees.length>0'>
-                    <!-- Index column -->
-                    <ng-container matColumnDef="index">
-                        <th mat-header-cell *matHeaderCellDef> Index </th>
-                        <td mat-cell *matCellDef="let coachee; let i = index;">
-                            {{i+(paginator.pageIndex * paginator.pageSize) + 1}}
-                        </td>
-                    </ng-container>
-                    <!-- Email Column -->
-                    <ng-container matColumnDef="email" sticky>
-                        <th mat-header-cell *matHeaderCellDef> Email </th>
-                        <td mat-cell *matCellDef="let coachee"> {{coachee?.email}} </td>
-                    </ng-container>
+  <mat-toolbar class="upload-toolbar" fxLayout="row wrap" fxLayoutAlign="start center">
+    <button [disabled]="loading$" mat-icon-button color="primary" (click)="goBack()" aria-label="Back to users">
+      <mat-icon class="mat-18">arrow_back</mat-icon>
+    </button>
+    <div class="upload-actions">
+      <button class="file-picker users-file-picker" [class.has-file]="selectedUserFileName" [disabled]="loading$" (click)="coacheeFile.click()">
+        <mat-icon>attach_file</mat-icon>
+        <span class="file-picker-copy">
+          <strong>{{selectedUserFileName || 'Choose users spreadsheet'}}</strong>
+          <small>{{selectedUserFileName ? 'Ready to preview' : 'Excel .xlsx or .xls'}}</small>
+        </span>
+      </button>
+      <input #coacheeFile class="hidden-file-input" type="file" accept=".xlsx,.xls" (change)="onFileChange($event)">
 
-                    <!--first Name Column -->
-                    <ng-container matColumnDef="first name">
-                        <th mat-header-cell *matHeaderCellDef>First Name </th>
-                        <td mat-cell *matCellDef="let coachee"> {{coachee.firstName}}</td>
-                    </ng-container>
-                    <!-- last name Column -->
-                    <ng-container matColumnDef="last name">
-                        <th mat-header-cell *matHeaderCellDef> Last Name </th>
-                        <td mat-cell *matCellDef="let coachee"> {{coachee.lastName}} </td>
-                    </ng-container>
-                    <!-- Gender Column -->
-                    <ng-container matColumnDef="gender">
-                        <th mat-header-cell *matHeaderCellDef> Gender </th>
-                        <td mat-cell *matCellDef="let coachee"> {{coachee.gender}} </td>
-                    </ng-container>
-                    <!-- Date of birth Column -->
-                    <ng-container matColumnDef="dateOfBirth">
-                        <th mat-header-cell *matHeaderCellDef> DOB </th>
-                        <td mat-cell *matCellDef="let coachee"> {{coachee.dateOfBirth }} </td>
-                    </ng-container>
-                    <!-- Phone number Column -->
-                    <ng-container matColumnDef="phoneNumber">
-                        <th mat-header-cell *matHeaderCellDef> Phone Number </th>
-                        <td mat-cell *matCellDef="let coachee"> {{coachee.phoneNumber}} </td>
-                    </ng-container>
-                    <!-- Member Column -->
-                    <ng-container matColumnDef="member">
-                        <th mat-header-cell *matHeaderCellDef> Member </th>
-                        <td mat-cell *matCellDef="let coachee"> {{coachee.isMember}}</td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="coacheeTableColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: coacheeTableColumns;"></tr>
-                </table>
-                <mat-paginator [length]='totalCoachees' [pageSizeOptions]="[20, 30]"></mat-paginator>
-            </mat-card-content>
-        </mat-card>
+      <a class="template-download" mat-stroked-button href="https://storage.googleapis.com/flourish/uploadfiles/User_batch_upload_template.xlsx">
+        <mat-icon>download</mat-icon>
+        <span>Download users template</span>
+      </a>
+
+      <button *ngIf="parqEnabled" class="file-picker parq-file-picker" [class.has-file]="selectedRegistrationFileName" [disabled]="loading$" (click)="registrationFile.click()">
+        <mat-icon>assignment</mat-icon>
+        <span class="file-picker-copy">
+          <strong>{{selectedRegistrationFileName || 'Choose PAR-Q sheet'}}</strong>
+          <small>{{selectedRegistrationFileName ? 'Ready to preview' : 'Registration workbook'}}</small>
+        </span>
+      </button>
+      <button *ngIf="parqEnabled" class="template-download parq-template-download" type="button" (click)="downloadParqRegistrationTemplate()">
+        <mat-icon>download</mat-icon>
+        <span>Download PAR-Q sheet</span>
+      </button>
     </div>
+    <input #registrationFile class="hidden-file-input" type="file" accept=".xlsx,.xls" (change)="onRegistrationFileChange($event)">
+    <span class="span-space"></span>
+    <button [disabled]="loading$" mat-flat-button color="primary" class="upload-submit" (click)="uploadUsers()">
+      <mat-icon>cloud_upload</mat-icon>
+      Upload
+    </button>
+  </mat-toolbar>
+
+  <div class="validation-errors" *ngIf="uploadMode === 'registration' && registrationErrors.length">
+    <h4>PAR-Q registration validation</h4>
+    <ul><li *ngFor="let error of registrationErrors">{{error.rowNumber ? 'Row ' + error.rowNumber + ': ' : ''}}{{error.message}}</li></ul>
+  </div>
+
+  <div class="table-card-container" *ngIf="uploadMode === 'users'">
+    <mat-card [ngStyle]="{'opacity': coachees.length ? 1 : 0}">
+      <mat-card-content>
+        <table mat-table [dataSource]="coacheeDataSource" *ngIf="coachees.length">
+          <ng-container matColumnDef="index"><th mat-header-cell *matHeaderCellDef>Index</th><td mat-cell *matCellDef="let coachee; let i = index">{{i + (paginator.pageIndex * paginator.pageSize) + 1}}</td></ng-container>
+          <ng-container matColumnDef="email" sticky><th mat-header-cell *matHeaderCellDef>Email</th><td mat-cell *matCellDef="let coachee">{{coachee?.email}}</td></ng-container>
+          <ng-container matColumnDef="first name"><th mat-header-cell *matHeaderCellDef>First name</th><td mat-cell *matCellDef="let coachee">{{coachee.firstName}}</td></ng-container>
+          <ng-container matColumnDef="last name"><th mat-header-cell *matHeaderCellDef>Last name</th><td mat-cell *matCellDef="let coachee">{{coachee.lastName}}</td></ng-container>
+          <ng-container matColumnDef="gender"><th mat-header-cell *matHeaderCellDef>Gender</th><td mat-cell *matCellDef="let coachee">{{coachee.gender}}</td></ng-container>
+          <ng-container matColumnDef="dateOfBirth"><th mat-header-cell *matHeaderCellDef>DOB</th><td mat-cell *matCellDef="let coachee">{{coachee.dateOfBirth}}</td></ng-container>
+          <ng-container matColumnDef="phoneNumber"><th mat-header-cell *matHeaderCellDef>Phone number</th><td mat-cell *matCellDef="let coachee">{{coachee.phoneNumber}}</td></ng-container>
+          <ng-container matColumnDef="member"><th mat-header-cell *matHeaderCellDef>Member</th><td mat-cell *matCellDef="let coachee">{{coachee.isMember}}</td></ng-container>
+          <tr mat-header-row *matHeaderRowDef="coacheeTableColumns"></tr><tr mat-row *matRowDef="let row; columns: coacheeTableColumns"></tr>
+        </table>
+        <mat-paginator [length]="totalCoachees" [pageSizeOptions]="[20, 30]"></mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="table-card-container" *ngIf="uploadMode === 'registration'">
+    <mat-card [ngStyle]="{'opacity': registrationRows.length ? 1 : 0}">
+      <mat-card-content>
+        <table mat-table [dataSource]="registrationDataSource" *ngIf="registrationRows.length">
+          <ng-container matColumnDef="rowNumber"><th mat-header-cell *matHeaderCellDef>Row</th><td mat-cell *matCellDef="let row">{{row.rowNumber}}</td></ng-container>
+          <ng-container matColumnDef="fullName"><th mat-header-cell *matHeaderCellDef>Full name</th><td mat-cell *matCellDef="let row">{{row.fullName}}</td></ng-container>
+          <ng-container matColumnDef="phoneNumber"><th mat-header-cell *matHeaderCellDef>Phone number</th><td mat-cell *matCellDef="let row">{{row.phoneNumber}}</td></ng-container>
+          <ng-container matColumnDef="gender"><th mat-header-cell *matHeaderCellDef>Gender</th><td mat-cell *matCellDef="let row">{{row.gender}}</td></ng-container>
+          <ng-container matColumnDef="dateOfBirth"><th mat-header-cell *matHeaderCellDef>DOB</th><td mat-cell *matCellDef="let row">{{row.dateOfBirth | date}}</td></ng-container>
+          <ng-container matColumnDef="parqSummary"><th mat-header-cell *matHeaderCellDef>PAR-Q</th><td mat-cell *matCellDef="let row">{{getParqSummary(row)}}</td></ng-container>
+          <tr mat-header-row *matHeaderRowDef="registrationTableColumns"></tr><tr mat-row *matRowDef="let row; columns: registrationTableColumns"></tr>
+        </table>
+        <mat-paginator [length]="registrationRows.length" [pageSizeOptions]="[20, 30]"></mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

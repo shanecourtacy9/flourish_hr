@@ -146,6 +146,17 @@ export class UsersService {
     );
   }
 
+  batchUploadRegistrationSheet(rows: any[]) {
+    this.loadingSubject.next(true);
+    return this.http
+      .post(`${URL}/batchUpload/registration-sheet`, { rows })
+      .pipe(
+        finalize(() => {
+          this.loadingSubject.next(false);
+        })
+      );
+  }
+
   assignMemberships(users) {
     this.loadingSubject.next(true);
     return this.http.post(`${URL}/assignMemberships`, users).pipe(
